@@ -149,10 +149,24 @@ const API = {
     deleteReview: (id) => fetch(`${API_BASE}/reviews/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
 
     // Report APIs
-    getSummaryReport: () => fetch(`${API_BASE}/reports/summary`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
-    getRevenueReport: () => fetch(`${API_BASE}/reports/revenue`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
-    getBoatReport: () => fetch(`${API_BASE}/reports/boats`, { headers: getAuthHeaders() }).then(res => handleRes(res))
-};
+    // Customer Profile APIs
+getCustomer: (id) =>
+    fetch(`${API_BASE}/customers/${id}`, {
+        headers: getAuthHeaders()
+    }).then(res => handleRes(res)),
+
+updateCustomerProfile: (id, data) =>
+    fetch(`${API_BASE}/customers/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+    }).then(res => handleRes(res)),
+
+// Report APIs
+getSummaryReport: () =>
+    fetch(`${API_BASE}/reports/summary`, {
+        headers: getAuthHeaders()
+    }).then(res => handleRes(res)),
 
 async function handleRes(res) {
     if (!res.ok) {
