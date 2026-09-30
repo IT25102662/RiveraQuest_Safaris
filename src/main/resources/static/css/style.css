@@ -1,0 +1,101 @@
+/* Custom Tailwind & Boat Safari System Styling */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-cyan: #0284c7;
+    --primary-teal: #0d9488;
+    --primary-navy: #0f172a;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-font {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Glassmorphism Navigation */
+.glass-nav {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hero Gradient */
+.hero-gradient {
+    background: linear-gradient(135deg, #0f172a 0%, #0369a1 50%, #0f766e 100%);
+}
+
+/* Glass Cards */
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+}
+
+/* Seat Selector Styles */
+.seat-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.seat-available {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+}
+.seat-available:hover {
+    background-color: #0284c7;
+    color: #ffffff;
+}
+
+.seat-selected {
+    background-color: #0d9488 !important;
+    color: #ffffff !important;
+    border: 1px solid #0f766e !important;
+    box-shadow: 0 0 10px rgba(13, 148, 136, 0.4);
+    transform: scale(1.05);
+}
+
+.seat-booked {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* Badge Styles */
+.badge-available { background-color: #dcfce7; color: #166534; }
+.badge-maintenance { background-color: #fee2e2; color: #991b1b; }
+.badge-scheduled { background-color: #e0f2fe; color: #075985; }
+.badge-confirmed { background-color: #dcfce7; color: #15803d; }
+.badge-cancelled { background-color: #fef2f2; color: #b91c1c; }
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
