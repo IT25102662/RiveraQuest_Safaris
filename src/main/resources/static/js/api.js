@@ -33,6 +33,7 @@ const API = {
         body: JSON.stringify(user)
     }).then(res => handleRes(res)),
     deleteUser: (id) => fetch(`${API_BASE}/users/${id}`, { method: 'DELETE', headers: getAuthHeaders() }),
+    updateUserStatus: (id, status) => fetch(`${API_BASE}/users/${id}/status?status=${status}`, { method: 'PUT', headers: getAuthHeaders() }).then(res => handleRes(res)),
 
     // Boat APIs
     getBoats: () => fetch(`${API_BASE}/boats`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
