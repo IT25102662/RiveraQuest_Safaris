@@ -1,4 +1,4 @@
-//Application Controller & View Router for Boat Safari Management System
+//Application Controller & View Router for Boat Safari Management System 
 
 const VIEW_PERMISSIONS = {
     'home-view': ['ALL'],
