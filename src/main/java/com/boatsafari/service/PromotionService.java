@@ -12,4 +12,6 @@ public interface PromotionService {
     Promotion updatePromotion(Long id, Promotion promotion);
     void deletePromotion(Long id);
     List<Promotion> searchPromotions(String keyword, String statusFilter);
+    Promotion setApplicableTrips(Long promotionId, List<Long> tripIds);
+    List<Long> getApplicableTripIds(Long promotionId);
 }
