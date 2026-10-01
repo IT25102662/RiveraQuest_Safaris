@@ -1152,14 +1152,20 @@ const App = {
             return;
         }
 
+        const selectedTripIds = Array.from(document.getElementById('voucher-applicable-trips').selectedOptions).map(opt => parseInt(opt.value));
+
         try {
+            let savedPromo;
             if (id) {
-                await API.updatePromotion(id, payload);
+                savedPromo = await API.updatePromotion(id, payload);
                 showToast('Voucher updated successfully.');
             } else {
-                await API.createPromotion(payload);
+                const user = AuthState.currentUser;
+                const marketingOfficerId = user && user.role === 'MARKETING_OFFICER' ? user.id : null;
+                savedPromo = await API.createPromotion(payload, marketingOfficerId);
                 showToast('Voucher created successfully.');
             }
+            await API.setApplicableTrips(savedPromo.id, selectedTripIds);
             document.getElementById('voucher-modal').classList.add('hidden');
             this.filterVouchers();
         } catch (e) {
