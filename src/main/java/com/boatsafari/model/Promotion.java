@@ -3,6 +3,8 @@ package com.boatsafari.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "promotions")
@@ -22,13 +24,13 @@ public class Promotion {
     @Enumerated(EnumType.STRING)
     private DiscountType discountType = DiscountType.PERCENTAGE;
 
-    private Double discountPercentage; // used when discountType = PERCENTAGE
+    private Double discountPercentage;
 
-    private Double fixedAmount; // used when discountType = FIXED_AMOUNT
+    private Double fixedAmount;
 
-    private Double maxDiscount; // optional cap on percentage discounts
+    private Double maxDiscount;
 
-    private Double minBookingAmount; // optional minimum spend to qualify
+    private Double minBookingAmount;
 
     private LocalDate validFrom;
 
@@ -39,23 +41,33 @@ public class Promotion {
 
     private Integer usageCount = 0;
 
-    private Integer usageLimit; // null = unlimited
+    private Integer usageLimit;
 
     @Enumerated(EnumType.STRING)
     private VoucherStatus status = VoucherStatus.ACTIVE;
 
-    // Report-required fields, added alongside your existing usage tracking & auto-computed status
     @Column(length = 10)
-    private String reportStatus = "Draft"; // Draft / Published / Archived — set manually by Marketing Officer
+    private String reportStatus = "Draft";
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private MarketingOfficer createdBy;
 
+    // New: restricts a voucher to specific trips. Empty set = applies to all trips.
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "promotion_trips",
+        joinColumns = @JoinColumn(name = "promotion_id"),
+        inverseJoinColumns = @JoinColumn(name = "trip_id")
+    )
+    private Set<Trip> applicableTrips = new HashSet<>();
+
     public Promotion() {}
 
-    public Promotion(Long id, String code, String description, Double discountPercentage, LocalDate validFrom, LocalDate validUntil, Boolean active, Integer usageCount) {
+    public Promotion(Long id, String code, String description, Double discountPercentage, LocalDate validFrom, LocalDate validUntil, Boolean active, Integer
+usageCount) {
         this.id = id;
         this.code = code;
         this.description = description;
@@ -116,6 +128,9 @@ public class Promotion {
 
     public MarketingOfficer getCreatedBy() { return createdBy; }
     public void setCreatedBy(MarketingOfficer createdBy) { this.createdBy = createdBy; }
+
+    public Set<Trip> getApplicableTrips() { return applicableTrips; }
+    public void setApplicableTrips(Set<Trip> applicableTrips) { this.applicableTrips = applicableTrips; }
 
     @Transient
     public VoucherStatus getComputedStatus() {
