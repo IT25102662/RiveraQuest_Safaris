@@ -483,8 +483,8 @@ case 'customer-profile-view':
 
         let cleared = 0, hold = 0, pending = 0;
         const badge = {
-            CLEARED: '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">Cleared</span>',
-            HOLD: '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800">On Hold</span>',
+            CLEARED: '<span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap bg-emerald-100 text-emerald-800">Cleared</span>',
+            HOLD: '<span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap bg-rose-100 text-rose-800">On Hold</span>',
             PENDING: '<span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap bg-amber-100 text-amber-800">Awaiting Audit</span>'
         };
         const tbody = document.getElementById('safety-trips-table');
@@ -551,8 +551,8 @@ case 'customer-profile-view':
                 </td>
                 <td class="p-3 text-xs text-slate-500">${String(c.inspectionTime || '').replace('T', ' ').substring(0, 16)}</td>
                 <td class="p-3">${c.departureApproved
-                    ? '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">Cleared</span>'
-                    : '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800">On Hold</span>'}</td>
+                    ? '<span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap bg-emerald-100 text-emerald-800">Cleared</span>'
+                    : '<span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap bg-rose-100 text-rose-800">On Hold</span>'}</td>
                 <td class="p-3"><div class="flex flex-wrap gap-1.5">
                     <button onclick="App.navigate('safety-checklist-view', {tripId: ${c.trip.id}})" class="px-2.5 py-1 bg-slate-800 text-white rounded-lg text-xs font-bold">Edit</button>
                     <button onclick="App.deleteSafetyRecord(${c.trip.id})" class="px-2.5 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold">Delete</button>
