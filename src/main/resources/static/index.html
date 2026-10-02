@@ -834,7 +834,19 @@
 
     <!-- 17. MAINTENANCE MANAGEMENT VIEW -->
     <div id="maintenance-management-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="page-banner banner-river"><div><h1 class="text-3xl font-extrabold">Engine &amp; Fleet Maintenance Logs</h1><p class="text-cyan-50 text-sm mt-1">Service history that keeps every vessel seaworthy</p></div></div>
+        <div class="page-banner banner-river">
+            <div><h1 class="text-3xl font-extrabold">Engine &amp; Fleet Maintenance Logs</h1><p class="text-cyan-50 text-sm mt-1">Service history that keeps every vessel seaworthy</p></div>
+            <button onclick="App.openMaintenanceModal()" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl text-sm shadow-lg shadow-teal-600/30 transition">+ Add Maintenance Log</button>
+        </div>
+        <div class="glass-card rounded-2xl p-4 mb-4 flex flex-wrap items-center gap-3">
+            <input type="text" id="maint-search" oninput="App.filterMaintenance()" placeholder="Search vessel, description or engineer..." class="flex-1 min-w-[200px] px-4 py-2 bg-slate-100 rounded-xl text-xs border-0">
+            <select id="maint-status-filter" onchange="App.filterMaintenance()" class="px-3 py-2 bg-slate-100 rounded-xl text-xs font-bold border-0">
+                <option value="ALL">All Statuses</option>
+                <option value="SCHEDULED">Scheduled</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="COMPLETED">Completed</option>
+            </select>
+        </div>
         <div class="glass-card rounded-2xl overflow-hidden shadow">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">
@@ -845,6 +857,7 @@
                     <th class="p-3">Cost</th>
                     <th class="p-3">Workshop / Engineer</th>
                     <th class="p-3">Status</th>
+                    <th class="p-3">Actions</th>
                 </tr>
                 </thead>
                 <tbody id="maintenance-logs-table"></tbody>
@@ -1155,6 +1168,55 @@
         <div class="flex gap-3">
             <button onclick="App.confirmCancelWithReason()" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-2xl text-xs shadow-lg">Confirm & Update to CANCELLED</button>
             <button onclick="document.getElementById('cancel-reason-modal').classList.add('hidden')" class="px-5 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs">Keep Active</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAINTENANCE LOG MODAL (FLEET MANAGER CRUD) -->
+<div id="maintenance-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-extrabold text-slate-900" id="maint-modal-title">+ Add Maintenance Log</h2>
+            <button onclick="document.getElementById('maintenance-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
+        </div>
+        <input type="hidden" id="maint-id">
+        <div class="space-y-3 text-xs mb-6">
+            <div>
+                <label class="font-bold text-slate-500 block mb-1">Vessel *</label>
+                <select id="maint-boat" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0 font-bold"></select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="font-bold text-slate-500 block mb-1">Service Date *</label>
+                    <input type="date" id="maint-date" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-500 block mb-1">Status *</label>
+                    <select id="maint-status" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0 font-bold">
+                        <option value="SCHEDULED">Scheduled</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="COMPLETED" selected>Completed</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="font-bold text-slate-500 block mb-1">Maintenance Description *</label>
+                <textarea id="maint-description" rows="3" placeholder="e.g. Engine oil change and propeller inspection" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="font-bold text-slate-500 block mb-1">Cost (LKR)</label>
+                    <input type="number" id="maint-cost" min="0" step="0.01" placeholder="e.g. 15000" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-500 block mb-1">Workshop / Engineer</label>
+                    <input type="text" id="maint-by" placeholder="e.g. Galle Marine Works" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0">
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="App.saveMaintenance()" class="flex-1 py-3 bg-teal-700 hover:bg-teal-800 text-white font-extrabold rounded-2xl text-xs shadow-lg">Save Maintenance Log</button>
+            <button onclick="document.getElementById('maintenance-modal').classList.add('hidden')" class="px-5 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs">Cancel</button>
         </div>
     </div>
 </div>

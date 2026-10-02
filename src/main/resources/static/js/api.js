@@ -56,6 +56,12 @@ const API = {
         headers: getAuthHeaders(),
         body: JSON.stringify(log)
     }).then(res => handleRes(res)),
+    updateMaintenance: (logId, log) => fetch(`${API_BASE}/boats/maintenance/${logId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(log)
+    }).then(res => handleRes(res)),
+    deleteMaintenance: (logId) => fetch(`${API_BASE}/boats/maintenance/${logId}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
     getMaintenanceLogs: (boatId) => fetch(`${API_BASE}/boats/${boatId}/maintenance`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     getAllMaintenanceLogs: () => fetch(`${API_BASE}/boats/maintenance/all`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
 

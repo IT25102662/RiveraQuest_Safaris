@@ -1229,21 +1229,127 @@ case 'customer-profile-view':
         }
     },
 
-    // Maintenance Management View
+    // Maintenance Management View (Create / Read / Update / Delete)
     async renderMaintenanceManagement() {
-        const logs = await API.getAllMaintenanceLogs();
+        try {
+            this.maintenanceLogs = await API.getAllMaintenanceLogs();
+        } catch (e) {
+            this.maintenanceLogs = [];
+            showToast(e.message, 'error');
+        }
+        this.filterMaintenance();
+    },
+
+    filterMaintenance() {
         const tbody = document.getElementById('maintenance-logs-table');
-        if (tbody) {
-            tbody.innerHTML = logs.map(l => `
-                <tr class="border-b border-slate-100 hover:bg-slate-50">
-                    <td class="p-3 font-bold text-slate-800 text-xs">${l.boat.name} (${l.boat.registrationNumber})</td>
-                    <td class="p-3 text-xs text-slate-600">${l.maintenanceDate}</td>
-                    <td class="p-3 text-xs text-slate-700">${l.description}</td>
-                    <td class="p-3 text-xs font-semibold text-cyan-700">LKR ${(l.cost||0).toLocaleString()}</td>
-                    <td class="p-3 text-xs text-slate-600">${l.performedBy}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 text-xs rounded-full ${l.status === 'COMPLETED' ? 'badge-confirmed' : 'badge-maintenance'}">${l.status}</span></td>
-                </tr>
-            `).join('');
+        if (!tbody) return;
+        const q = (document.getElementById('maint-search').value || '').toLowerCase().trim();
+        const f = document.getElementById('maint-status-filter').value;
+        const rows = (this.maintenanceLogs || []).filter(l => {
+            if (f !== 'ALL' && l.status !== f) return false;
+            const text = `${l.boat.name} ${l.boat.registrationNumber} ${l.description} ${l.performedBy || ''}`.toLowerCase();
+            return !q || text.includes(q);
+        }).sort((x, y) => String(y.maintenanceDate).localeCompare(String(x.maintenanceDate)));
+
+        if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-xs text-slate-400">No maintenance logs found.</td></tr>';
+            return;
+        }
+        const badge = {
+            COMPLETED: 'bg-emerald-100 text-emerald-800',
+            IN_PROGRESS: 'bg-amber-100 text-amber-800',
+            SCHEDULED: 'bg-sky-100 text-sky-800'
+        };
+        tbody.innerHTML = rows.map(l => `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="p-3 font-bold text-slate-800 text-xs">${l.boat.name} (${l.boat.registrationNumber})</td>
+                <td class="p-3 text-xs text-slate-600">${l.maintenanceDate}</td>
+                <td class="p-3 text-xs text-slate-700">${l.description}</td>
+                <td class="p-3 text-xs font-semibold text-cyan-700">LKR ${(l.cost||0).toLocaleString()}</td>
+                <td class="p-3 text-xs text-slate-600">${l.performedBy || '-'}</td>
+                <td class="p-3"><span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap ${badge[l.status] || 'bg-slate-200 text-slate-600'}">${String(l.status).replace('_', ' ')}</span></td>
+                <td class="p-3"><div class="flex gap-1.5">
+                    <button onclick="App.openMaintenanceModal(${l.id})" class="px-2.5 py-1 bg-slate-800 text-white rounded-lg text-xs font-bold">Edit</button>
+                    <button onclick="App.deleteMaintenance(${l.id})" class="px-2.5 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold">Delete</button>
+                </div></td>
+            </tr>`).join('');
+    },
+
+    async openMaintenanceModal(id) {
+        let boats = [];
+        try { boats = await API.getBoats(); } catch (e) { showToast(e.message, 'error'); return; }
+        const sel = document.getElementById('maint-boat');
+        sel.innerHTML = boats.map(b => `<option value="${b.id}">${b.name} (${b.registrationNumber})</option>`).join('');
+        sel.disabled = false;
+        document.getElementById('maint-id').value = '';
+        document.getElementById('maint-date').value = new Date().toISOString().substring(0, 10);
+        document.getElementById('maint-status').value = 'COMPLETED';
+        document.getElementById('maint-description').value = '';
+        document.getElementById('maint-cost').value = '';
+        document.getElementById('maint-by').value = '';
+        document.getElementById('maint-modal-title').textContent = '+ Add Maintenance Log';
+
+        if (id) {
+            const l = (this.maintenanceLogs || []).find(x => x.id === id);
+            if (!l) { showToast('Maintenance log not found.', 'error'); return; }
+            document.getElementById('maint-id').value = l.id;
+            sel.value = l.boat.id;
+            sel.disabled = true;
+            document.getElementById('maint-date').value = l.maintenanceDate;
+            document.getElementById('maint-status').value = l.status;
+            document.getElementById('maint-description').value = l.description || '';
+            document.getElementById('maint-cost').value = l.cost ?? '';
+            document.getElementById('maint-by').value = l.performedBy || '';
+            document.getElementById('maint-modal-title').textContent = 'Edit Maintenance Log';
+        }
+        document.getElementById('maintenance-modal').classList.remove('hidden');
+    },
+
+    async saveMaintenance() {
+        const id = document.getElementById('maint-id').value;
+        const boatId = document.getElementById('maint-boat').value;
+        const date = document.getElementById('maint-date').value;
+        const status = document.getElementById('maint-status').value;
+        const description = document.getElementById('maint-description').value.trim();
+        const costRaw = document.getElementById('maint-cost').value;
+        const cost = costRaw === '' ? 0 : parseFloat(costRaw);
+
+        if (!boatId || !date || !description) { showToast('Please fill in all required fields (*).', 'error'); return; }
+        if (isNaN(cost) || cost < 0) { showToast('Cost must be zero or more.', 'error'); return; }
+        if (status === 'COMPLETED' && date > new Date().toISOString().substring(0, 10)) {
+            showToast('A completed service cannot be dated in the future.', 'error');
+            return;
+        }
+        const payload = {
+            maintenanceDate: date,
+            description: description,
+            cost: cost,
+            performedBy: document.getElementById('maint-by').value.trim(),
+            status: status
+        };
+        try {
+            if (id) {
+                await API.updateMaintenance(id, payload);
+                showToast('Maintenance log updated.');
+            } else {
+                await API.addMaintenance(boatId, payload);
+                showToast('Maintenance log added.');
+            }
+            document.getElementById('maintenance-modal').classList.add('hidden');
+            await this.renderMaintenanceManagement();
+        } catch (e) {
+            showToast(e.message, 'error');
+        }
+    },
+
+    async deleteMaintenance(id) {
+        if (!confirm('Delete this maintenance log? This cannot be undone.')) return;
+        try {
+            await API.deleteMaintenance(id);
+            showToast('Maintenance log deleted.');
+            await this.renderMaintenanceManagement();
+        } catch (e) {
+            showToast(e.message, 'error');
         }
     },
 
