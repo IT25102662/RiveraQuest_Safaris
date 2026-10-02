@@ -1351,7 +1351,8 @@ case 'customer-profile-view':
         try {
             await API.updateReviewStatus(id, status);
             showToast('Feedback status updated.');
-            this.renderRatingSummary();
+            await this.filterReviews();
+            await this.renderRatingSummary();
         } catch (e) {
             showToast(e.message, 'error');
             this.filterReviews();
