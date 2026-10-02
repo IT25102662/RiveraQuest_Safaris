@@ -66,8 +66,29 @@ if ("SEVERE_WARNING".equalsIgnoreCase(checklist.getWeatherAdvisoryStatus())) {
 throw new BusinessRuleException("Safety Violation: Cannot approve departure under SEVERE_WARNING weather advisory!");
 }
 checklist.setDepartureApproved(true);
+if (checklist.getComments() != null && checklist.getComments().startsWith("HOLD:")) {
+checklist.setComments(null);
+}
 checklist.setInspectorName(inspectorName);
 checklist.setInspectionTime(LocalDateTime.now());
 return safetyChecklistRepository.save(checklist);
+}
+
+@Override
+public SafetyChecklist holdDeparture(Long tripId, String inspectorName, String reason) {
+SafetyChecklist checklist = getChecklistByTrip(tripId);
+if (reason == null || reason.trim().isEmpty()) {
+throw new BusinessRuleException("A reason is required to place a departure on hold!");
+}
+checklist.setDepartureApproved(false);
+checklist.setInspectorName(inspectorName);
+checklist.setInspectionTime(LocalDateTime.now());
+checklist.setComments("HOLD: " + reason.trim());
+return safetyChecklistRepository.save(checklist);
+}
+@Override
+public void deleteChecklist(Long tripId) {
+SafetyChecklist checklist = getChecklistByTrip(tripId);
+safetyChecklistRepository.delete(checklist);
 }
 }

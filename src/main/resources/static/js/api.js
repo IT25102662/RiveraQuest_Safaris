@@ -56,6 +56,12 @@ const API = {
         headers: getAuthHeaders(),
         body: JSON.stringify(log)
     }).then(res => handleRes(res)),
+    updateMaintenance: (logId, log) => fetch(`${API_BASE}/boats/maintenance/${logId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(log)
+    }).then(res => handleRes(res)),
+    deleteMaintenance: (logId) => fetch(`${API_BASE}/boats/maintenance/${logId}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
     getMaintenanceLogs: (boatId) => fetch(`${API_BASE}/boats/${boatId}/maintenance`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     getAllMaintenanceLogs: () => fetch(`${API_BASE}/boats/maintenance/all`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
 
@@ -109,6 +115,8 @@ const API = {
         headers: getAuthHeaders(),
         body: JSON.stringify(checklist)
     }).then(res => handleRes(res)),
+    holdDeparture: (tripId, inspectorName, reason) => fetch(`${API_BASE}/safety/trip/${tripId}/hold?inspectorName=${encodeURIComponent(inspectorName)}&reason=${encodeURIComponent(reason)}`, { method: 'PUT', headers: getAuthHeaders() }).then(res => handleRes(res)),
+    deleteSafetyChecklist: (tripId) => fetch(`${API_BASE}/safety/trip/${tripId}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
     approveDeparture: (tripId, inspectorName) => fetch(`${API_BASE}/safety/trip/${tripId}/approve?inspectorName=${encodeURIComponent(inspectorName)}`, { method: 'PUT', headers: getAuthHeaders() }).then(res => handleRes(res)),
 
     // Promotion APIs

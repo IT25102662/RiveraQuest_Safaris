@@ -49,4 +49,13 @@ public class BoatController {
   public ResponseEntity<List<MaintenanceLog>> getAllMaintenanceLogs() {
     return ResponseEntity.ok(boatService.getAllMaintenanceLogs());
   }
+  @PutMapping("/maintenance/{logId}")
+  public ResponseEntity<MaintenanceLog> updateMaintenanceLog(@PathVariable Long logId, @RequestBody MaintenanceLog log) {
+    return ResponseEntity.ok(boatService.updateMaintenanceLog(logId, log));
+  }
+  @DeleteMapping("/maintenance/{logId}")
+  public ResponseEntity<Void> deleteMaintenanceLog(@PathVariable Long logId) {
+    boatService.deleteMaintenanceLog(logId);
+    return ResponseEntity.noContent().build();
+  }
 }

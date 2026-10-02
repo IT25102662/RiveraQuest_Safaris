@@ -15,4 +15,6 @@ public interface BoatService {
   MaintenanceLog addMaintenanceLog(Long boatId, MaintenanceLog log);
   List<MaintenanceLog> getMaintenanceLogsForBoat(Long boatId);
   List<MaintenanceLog> getAllMaintenanceLogs();
+  MaintenanceLog updateMaintenanceLog(Long logId, MaintenanceLog updated);
+  void deleteMaintenanceLog(Long logId);
 }

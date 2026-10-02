@@ -1,47 +1,98 @@
-/* Custom Tailwind & Boat Safari System Styling */
+/* RiveraQuest Safaris - Ocean & Sand theme
+   Palette is defined in the Tailwind config in index.html (slate = deep ocean, cyan = aqua,
+   teal = lagoon, amber = sandy gold). This file adds the shared look and feel. */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary-cyan: #0284c7;
-    --primary-teal: #0d9488;
-    --primary-navy: #0f172a;
+    --ocean-950: #061827;
+    --ocean-900: #0c2338;
+    --ocean-700: #0b6b87;
+    --aqua-500: #0ea2c1;
+    --aqua-300: #5fd3e4;
+    --lagoon-600: #0c7d75;
+    --sand-50: #fdf8ee;
+    --sand-200: #f2dcab;
+    --gold-500: #d9921a;
+    --shadow-soft: 0 12px 30px -10px rgba(12, 35, 56, 0.18);
 }
+
+html { scroll-behavior: smooth; }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #f8fafc;
-    color: #1e293b;
+    color: #1a3145;
+}
+
+/* Soft sea-to-sand page background (overrides the Tailwind bg-slate-50 on <body>) */
+body.bg-slate-50 {
+    background: linear-gradient(180deg, #e9f6fa 0%, #f3f8fb 38%, #fbf6ea 100%) fixed !important;
 }
 
 h1, h2, h3, h4, h5, h6, .brand-font {
     font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.01em;
 }
 
-/* Glassmorphism Navigation */
+/* Header: deep ocean with a thin sandy-gold edge */
 .glass-nav {
-    background: rgba(15, 23, 42, 0.85);
+    background: linear-gradient(90deg, rgba(6, 24, 39, 0.96) 0%, rgba(11, 79, 108, 0.94) 100%);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(217, 146, 26, 0.55);
 }
 
-/* Hero Gradient */
+/* Hero: deep sea fading to bright aqua */
 .hero-gradient {
-    background: linear-gradient(135deg, #0f172a 0%, #0369a1 50%, #0f766e 100%);
+    background: linear-gradient(160deg, #061827 0%, #0b4f6c 48%, #0ea2c1 100%);
 }
 
-/* Glass Cards */
+/* Cards: clean white, soft aqua edge, gentle lift on hover */
 .glass-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    border: 1px solid rgba(170, 198, 216, 0.55);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+.glass-card:hover {
+    box-shadow: 0 16px 36px -10px rgba(11, 107, 135, 0.28);
+}
+
+/* Smooth fade when a page is shown */
+.view-page:not(.hidden) {
+    animation: pageFade 0.35s ease both;
+}
+@keyframes pageFade {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Wave divider helpers (used with an inline SVG) */
+.wave-divider { display: block; width: 100%; height: 60px; }
+.wave-bob { animation: waveBob 7s ease-in-out infinite; }
+@keyframes waveBob {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-24px); }
+}
+.boat-float { animation: boatFloat 4s ease-in-out infinite; }
+@keyframes boatFloat {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+/* Form controls: aqua focus ring */
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(14, 162, 193, 0.28) !important;
+}
+
+button { transition: all 0.18s ease; }
+button:not(:disabled):active { transform: translateY(1px); }
 
 /* Seat Selector Styles */
 .seat-btn {
     width: 44px;
     height: 44px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
     font-size: 0.8rem;
     display: flex;
@@ -52,27 +103,27 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 .seat-available {
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
+    background-color: #e4f7fb;
+    color: #0b6b87;
+    border: 1px solid #98e6f0;
 }
 .seat-available:hover {
-    background-color: #0284c7;
+    background-color: #0ea2c1;
     color: #ffffff;
 }
 
 .seat-selected {
-    background-color: #0d9488 !important;
+    background-color: #0c7d75 !important;
     color: #ffffff !important;
-    border: 1px solid #0f766e !important;
-    box-shadow: 0 0 10px rgba(13, 148, 136, 0.4);
+    border: 1px solid #0d645f !important;
+    box-shadow: 0 0 12px rgba(12, 125, 117, 0.45);
     transform: scale(1.05);
 }
 
 .seat-booked {
-    background-color: #f1f5f9;
-    color: #94a3b8;
-    border: 1px solid #e2e8f0;
+    background-color: #e6f0f6;
+    color: #7a9db3;
+    border: 1px solid #cfe1ec;
     cursor: not-allowed;
     text-decoration: line-through;
 }
@@ -80,22 +131,214 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 /* Badge Styles */
 .badge-available { background-color: #dcfce7; color: #166534; }
 .badge-maintenance { background-color: #fee2e2; color: #991b1b; }
-.badge-scheduled { background-color: #e0f2fe; color: #075985; }
+.badge-scheduled { background-color: #e4f7fb; color: #0b6b87; }
 .badge-confirmed { background-color: #dcfce7; color: #15803d; }
 .badge-cancelled { background-color: #fef2f2; color: #b91c1c; }
 
 /* Custom Scrollbars */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #e6f0f6; }
+::-webkit-scrollbar-thumb { background: #7a9db3; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #0b6b87; }
+
+@media (prefers-reduced-motion: reduce) {
+    .wave-bob, .boat-float, .view-page:not(.hidden) { animation: none !important; }
 }
-::-webkit-scrollbar-track {
-    background: #f1f5f9;
+
+/* ---------- Stage 2/3: role menu bars and hero scene ---------- */
+.stakeholder-workspace {
+    background: linear-gradient(90deg, #0c2338 0%, #0f566d 100%) !important;
+    border-bottom: 1px solid rgba(217, 146, 26, 0.35) !important;
 }
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
+.stakeholder-workspace a[data-view] { color: #cfe1ec; }
+.stakeholder-workspace a[data-view]:hover { background: rgba(255, 255, 255, 0.10); color: #ffffff; }
+.stakeholder-workspace a[data-view].bg-cyan-600 {
+    background: linear-gradient(135deg, #f7c95a, #d9921a) !important;
+    color: #0c2338 !important;
 }
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+.stakeholder-workspace .text-cyan-400,
+.stakeholder-workspace .text-teal-400,
+.stakeholder-workspace .text-emerald-400,
+.stakeholder-workspace .text-indigo-400,
+.stakeholder-workspace .text-amber-400 { color: #f7c95a !important; }
+
+.hero-scene { min-height: 560px; }
+.hero-sun {
+    position: absolute; top: 36px; right: 9%; width: 120px; height: 120px; border-radius: 9999px;
+    background: radial-gradient(circle, #fdefc8 0%, #f7c95a 45%, rgba(247, 201, 90, 0) 72%);
+    opacity: 0.85; z-index: 0;
 }
+.hero-birds { position: absolute; top: 70px; left: 8%; width: 180px; opacity: 0.7; z-index: 0; animation: birdDrift 14s ease-in-out infinite; }
+@keyframes birdDrift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(40px); } }
+.hero-waves { position: relative; z-index: 5; margin-top: -8px; overflow: hidden; line-height: 0; }
+@media (prefers-reduced-motion: reduce) { .hero-birds { animation: none !important; } }
+
+/* ---------- Stage 3b: photo hero + picture cards ---------- */
+/* Photo layers: your own img/hero.jpg first, then a stock sea photo, then the colour gradient underneath */
+.hero-photo {
+    background-image:
+        linear-gradient(180deg, rgba(6, 24, 39, 0.62) 0%, rgba(6, 24, 39, 0.38) 55%, rgba(6, 24, 39, 0.18) 100%),
+        url('../img/hero.jpg'),
+        url('https://images.pexels.com/photos/8300146/pexels-photo-8300146.jpeg?auto=compress&cs=tinysrgb&w=1920'),
+        linear-gradient(160deg, #061827 0%, #0b4f6c 48%, #0ea2c1 100%);
+    background-size: cover;
+    background-position: center;
+}
+.hero-photo .hero-sun, .hero-photo .hero-birds, .hero-photo .hero-boat-wrap { display: none; }
+.hero-photo { min-height: 520px; }
+.hero-photo h1, .hero-photo p { text-shadow: 0 2px 14px rgba(6, 24, 39, 0.75); }
+
+.scenery {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.4s ease;
+}
+.scenery::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(6, 24, 39, 0) 55%, rgba(6, 24, 39, 0.35) 100%);
+}
+.glass-card:hover .scenery { transform: scale(1.03); }
+.scenery-tag {
+    position: absolute; left: 12px; bottom: 10px; z-index: 2;
+    padding: 3px 10px; border-radius: 9999px; font-size: 10px; font-weight: 800;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    background: rgba(6, 24, 39, 0.72); color: #f7c95a; backdrop-filter: blur(4px);
+}
+.glass-card:has(> .scenery), .glass-card:has(.scenery) { overflow: hidden; }
+
+/* ---------- Stage 4: photo page banners ---------- */
+.page-banner, .login-photo {
+    position: relative; color: #ffffff; overflow: hidden;
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+}
+.page-banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    border-radius: 1.5rem; padding: 2rem; margin-bottom: 2rem; min-height: 130px;
+    box-shadow: var(--shadow-soft);
+}
+.login-photo { display: flex; align-items: flex-end; padding: 1.5rem 2rem; min-height: 150px; }
+.page-banner > *, .login-photo > * { position: relative; z-index: 1; }
+.page-banner h1 { color: #ffffff; text-shadow: 0 2px 12px rgba(6, 24, 39, 0.6); }
+.banner-river { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/river-banner.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-whale { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/whale-banner.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-reef  { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/reef-banner.jpg'), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-coast { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/coast-banner.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+@media (max-width: 640px) { .page-banner { flex-direction: column; align-items: flex-start; padding: 1.25rem; } }
+
+/* ---------- Stage 5: staff pages ---------- */
+.scenery.compact .scenery-tag { display: none; }
+.scenery.compact::after { display: none; }
+.voucher-strip {
+    height: 56px;
+    background-image:
+        linear-gradient(90deg, rgba(217, 146, 26, 0.80) 0%, rgba(12, 35, 56, 0.55) 100%),
+        url('../img/coast-banner.jpg'),
+        url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'),
+        linear-gradient(135deg, #d9921a, #0c2338);
+    background-size: cover; background-position: center;
+}
+
+/* ---------- Home highlight tiles ---------- */
+.feature-tile { display: block; width: 100%; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.feature-tile:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(12, 35, 56, 0.18); }
+.feature-photo { height: 110px; background-size: cover; background-repeat: no-repeat; }
+.feature-photo-lg { height: 190px; }
+.feat-whale { background-image: url('../img/whale.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center 55%; }
+.feat-river { background-image: url('../img/river.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
+.feat-safety { background-image: url('../img/safety.jpg'), url('https://images.pexels.com/photos/36546904/pexels-photo-36546904.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
+.feat-vouchers { background-image: url('../img/vouchers.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
+.feat-vouchers { background-image: linear-gradient(90deg, rgba(217, 146, 26, 0.55), rgba(12, 35, 56, 0.25)), url('../img/vouchers.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #d9921a, #0c2338); }
+
+/* ---------- Stage 6: image focus + single-line menu ---------- */
+.scenery-river { background-position: center 62%; }
+.scenery-whale { background-position: center 45%; }
+.scenery-reef  { background-position: center 50%; }
+.scenery-coast { background-position: center 58%; }
+.scenery.compact { background-position: center; }
+.stakeholder-workspace a[data-view] { white-space: nowrap; font-size: 0.82rem; padding-left: 0.6rem; padding-right: 0.6rem; }
+@media (min-width: 1536px) { .stakeholder-workspace a[data-view] { font-size: 0.875rem; padding-left: 0.75rem; padding-right: 0.75rem; } }
+
+/* ---------- Stage 7: form modals (Add Boat, Add Voucher, Package, Review, Walk-in, Cancel) ---------- */
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) > .bg-white {
+    border-top-width: 0 !important;
+    border-radius: 1.5rem;
+    padding-top: 2.1rem;
+    background:
+        linear-gradient(90deg, #0b6b87 0%, #0ea2c1 55%, #f7c95a 100%) top / 100% 7px no-repeat,
+        radial-gradient(circle at 100% 0%, rgba(247, 201, 90, 0.16), transparent 42%),
+        #ffffff;
+    box-shadow: 0 30px 70px rgba(6, 24, 39, 0.45);
+    animation: modalRise 0.22s ease-out;
+}
+@keyframes modalRise { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) h2 {
+    color: #0c2338;
+    letter-spacing: -0.01em;
+}
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) > .bg-white > div:first-child {
+    padding-bottom: 0.9rem;
+    border-bottom: 1px dashed #d9e6ee;
+}
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) > .bg-white > div:first-child > button {
+    width: 2rem; height: 2rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center;
+    background: #eef5f9; color: #4b6b80; font-size: 0.9rem; line-height: 1;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) > .bg-white > div:first-child > button:hover { background: #fde4ea; color: #c01d43; }
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) label { color: #4b6b80; letter-spacing: 0.02em; }
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) input:not([type="checkbox"]):not([type="radio"]),
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) select,
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) textarea {
+    background: #f1f7fa !important;
+    border: 1px solid #d7e6ee !important;
+    border-radius: 0.75rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) input:focus,
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) select:focus,
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) textarea:focus {
+    outline: none;
+    background: #ffffff !important;
+    border-color: #0ea2c1 !important;
+    box-shadow: 0 0 0 3px rgba(14, 162, 193, 0.22);
+}
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) button.bg-slate-800,
+[id$="-modal"]:not(#feature-modal):not(#access-denied-modal) button.bg-slate-900 {
+    background: linear-gradient(135deg, #0c2338, #0b6b87);
+}
+
+/* ---------- Stage 8: varied voucher cards ---------- */
+.voucher-card { border-left: 4px solid var(--vc); }
+.vt-0 { --vc: #0e9bb8; --vc-soft: #dff4f9; --vc-dark: #0b5f76; }
+.vt-1 { --vc: #d9921a; --vc-soft: #fdf0cf; --vc-dark: #8a5a0a; }
+.vt-2 { --vc: #0f8f7a; --vc-soft: #d9f3ec; --vc-dark: #0a5e50; }
+.vt-3 { --vc: #e0566b; --vc-soft: #fde4ea; --vc-dark: #9a2a3f; }
+.voucher-code { color: var(--vc-dark); }
+.voucher-card .voucher-strip { height: 92px; position: relative; background-size: cover; background-position: center; }
+.voucher-off {
+    position: absolute; right: 14px; bottom: 10px; padding: 4px 12px; border-radius: 9999px;
+    background: #ffffff; color: var(--vc-dark); font-size: 12px; font-weight: 800; letter-spacing: 0.03em;
+    box-shadow: 0 4px 12px rgba(6, 24, 39, 0.28);
+}
+.vs-0 { background-image: linear-gradient(135deg, rgba(14, 155, 184, 0.55), rgba(6, 24, 39, 0.35)), url('../img/river-banner.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0e9bb8, #0c2338); }
+.vs-1 { background-image: linear-gradient(135deg, rgba(217, 146, 26, 0.50), rgba(6, 24, 39, 0.35)), url('../img/whale-banner.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #d9921a, #0c2338); }
+.vs-2 { background-image: linear-gradient(135deg, rgba(15, 143, 122, 0.50), rgba(6, 24, 39, 0.30)), url('../img/reef-banner.jpg'), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0f8f7a, #0c2338); }
+.vs-3 { background-image: linear-gradient(135deg, rgba(224, 86, 107, 0.45), rgba(6, 24, 39, 0.30)), url('../img/coast-banner.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #e0566b, #0c2338); }
+
+/* ---------- Stage 9: tick-box trip pickers ---------- */
+.trip-checklist {
+    max-height: 11rem; overflow-y: auto; padding: 0.35rem;
+    background: #f1f7fa; border: 1px solid #d7e6ee; border-radius: 0.9rem;
+}
+.trip-option {
+    display: flex; align-items: flex-start; gap: 0.65rem; padding: 0.55rem 0.7rem; border-radius: 0.65rem;
+    cursor: pointer; transition: background 0.15s ease;
+}
+.trip-option:hover { background: #e3f0f6; }
+.trip-option input[type="checkbox"] { width: 1.1rem; height: 1.1rem; margin-top: 0.15rem; accent-color: #0b8aa8; flex-shrink: 0; cursor: pointer; }
+.trip-option span { display: flex; flex-direction: column; font-size: 0.78rem; line-height: 1.25; }
+.trip-option strong { color: #0c2338; font-weight: 700; }
+.trip-option em { color: #4b6b80; font-style: normal; font-size: 0.72rem; }
+.trip-option:has(input:checked) { background: #dff4f9; box-shadow: inset 3px 0 0 #0b8aa8; }
