@@ -1,4 +1,4 @@
-// Application Controller & View Router for Boat Safari Management System
+//Application Controller & View Router for Boat Safari Management System 
 
 const VIEW_PERMISSIONS = {
     'home-view': ['ALL'],
@@ -176,8 +176,12 @@ const App = {
                     await this.renderReports();
                     break;
                 case 'user-management-view':
-                    await this.renderUserManagement();
-                    break;
+    await this.renderUserManagement();
+    break;
+
+case 'customer-profile-view':
+    await this.renderCustomerProfile();
+    break;
             }
         } catch (err) {
             console.error('View load error:', err);
