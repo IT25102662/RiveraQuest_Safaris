@@ -1454,6 +1454,7 @@ case 'customer-profile-view':
         const users = await API.getUsers();
         const tbody = document.getElementById('users-table-body');
         if (tbody) {
+            const myEmail = AuthState.currentUser ? AuthState.currentUser.email : null;
             tbody.innerHTML = users.map(u => `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
                     <td class="p-3 font-bold text-slate-800 text-xs">${u.fullName}</td>
@@ -1462,9 +1463,9 @@ case 'customer-profile-view':
                     <td class="p-3 text-xs font-bold text-cyan-700">${u.role}</td>
                     <td class="p-3"><span class="px-2 py-0.5 text-xs rounded-full ${u.status === 'ACTIVE' ? 'badge-confirmed' : 'badge-cancelled'}">${u.status}</span></td>
                     <td class="p-3">
-                        <button onclick="App.toggleUserStatus(${u.id}, '${u.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'}')" class="px-2.5 py-1 text-xs font-medium rounded-lg ${u.status === 'ACTIVE' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700'} text-white">
+                        ${u.email === myEmail ? '<span class="text-xs text-slate-400 italic">Current user</span>' : `<button onclick="App.toggleUserStatus(${u.id}, '${u.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'}')" class="px-2.5 py-1 text-xs font-medium rounded-lg ${u.status === 'ACTIVE' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700'} text-white">
                             ${u.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
-                        </button>
+                        </button>`}
                     </td>
                 </tr>
             `).join('');
