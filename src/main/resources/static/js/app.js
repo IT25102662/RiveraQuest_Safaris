@@ -932,6 +932,43 @@ case 'customer-profile-view':
         }
     },
 
+    // Customer Profile View
+    async renderCustomerProfile() {
+        const c = await API.getCustomer(AuthState.currentUser.id);
+        const set = (id, value) => { document.getElementById(id).value = value || ''; };
+        set('profile-first-name', c.firstName);
+        set('profile-last-name', c.lastName);
+        set('profile-email', c.email);
+        set('profile-phone', c.phoneNumber);
+        set('profile-street', c.street);
+        set('profile-city', c.city);
+        set('profile-country', c.country);
+        document.getElementById('profile-member-since').textContent = c.registrationDate || '-';
+        document.getElementById('profile-account-status').textContent = c.accountStatus || '-';
+    },
+
+    async saveCustomerProfile() {
+        const get = (id) => document.getElementById(id).value.trim();
+        if (!get('profile-first-name')) {
+            return showToast('First name cannot be empty.', 'error');
+        }
+        const payload = {
+            firstName: get('profile-first-name'),
+            lastName: get('profile-last-name'),
+            phoneNumber: get('profile-phone'),
+            street: get('profile-street'),
+            city: get('profile-city'),
+            country: get('profile-country')
+        };
+        try {
+            await API.updateCustomerProfile(AuthState.currentUser.id, payload);
+            showToast('Profile updated successfully.');
+            await this.renderCustomerProfile();
+        } catch (e) {
+            showToast(e.message, 'error');
+        }
+    },
+
     // Safety Checklist View
     async renderSafetyChecklist(tripId) {
         const trip = await API.getTrip(tripId);
