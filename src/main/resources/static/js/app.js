@@ -1444,6 +1444,70 @@ case 'customer-profile-view':
         }
     },
 
+    // Home page highlight tiles: description + picture
+    featureInfo: {
+        whale: {
+            tag: 'Mirissa Whale Coast', title: 'Whale &amp; Dolphin Watching',
+            text: 'Head out from Mirissa Harbour into the open sea with a certified naturalist guide. Sri Lanka\'s southern coast is known for blue whales, sperm whales and dolphins, and sightings are usually best from about November to April.',
+            points: ['Certified seaworthy vessels with life jackets for every guest', 'Naturalist guide on board', 'Early departures for calmer seas', 'Live seat availability and an instant digital boarding pass'],
+            cta: 'Browse Whale Trips', go: () => App.navigate('package-listing-view', { origin: 'Mirissa' })
+        },
+        river: {
+            tag: 'Madu River & Bentota', title: 'Mangrove River Tours',
+            text: 'Glide through narrow, shaded mangrove tunnels on the Madu River and Bentota estuary. Stop at small river islands such as Kothduwa and look out for birds, monitor lizards and fish along the banks.',
+            points: ['Calm water that suits families and first-time visitors', 'Island stops with a local guide', 'Short half-day schedules', 'Small boats with limited seats for a quieter trip'],
+            cta: 'Browse River Trips', go: () => App.navigate('package-listing-view', { origin: 'Balapitiya' })
+        },
+        safety: {
+            tag: 'Safety First', title: 'Safety Audited Vessels',
+            text: 'No departure sails until our Safety Officer has completed the pre-departure audit. Fleet records for engine status, fuel level and maintenance are kept up to date for every vessel.',
+            points: ['Life jacket count and first aid kit checked', 'Emergency contact number confirmed', 'Weather advisory reviewed before clearance', 'Departure is approved or held by the Safety Officer'],
+            cta: 'View Departures', go: () => App.navigate('trip-schedule-view')
+        },
+        vouchers: {
+            tag: 'Save on your booking', title: 'Seasonal Vouchers',
+            text: 'Enter a voucher code on the seat selection page to reduce your total. The system checks every code against the trip, the dates and your booking amount before applying the discount.',
+            points: ['Percentage and fixed-amount offers', 'Each code has a start and an expiry date', 'Some codes apply only to selected trips', 'Your discount is shown before you confirm'],
+            cta: 'Find a Trip to Book', go: () => App.navigate('package-listing-view')
+        }
+    },
+
+    async openFeatureInfo(key) {
+        const f = this.featureInfo[key];
+        if (!f) return;
+        document.getElementById('feature-modal-photo').className = 'feature-photo feature-photo-lg relative feat-' + key;
+        document.getElementById('feature-modal-tag').textContent = f.tag;
+        document.getElementById('feature-modal-title').innerHTML = f.title;
+        document.getElementById('feature-modal-text').textContent = f.text;
+        document.getElementById('feature-modal-points').innerHTML = f.points.map(p =>
+            `<li class="flex gap-2 text-sm text-slate-700"><span class="text-emerald-600 font-bold">✓</span><span>${p}</span></li>`).join('');
+        const extra = document.getElementById('feature-modal-extra');
+        extra.innerHTML = '';
+        const cta = document.getElementById('feature-modal-cta');
+        cta.textContent = f.cta;
+        cta.onclick = () => { this.closeFeatureInfo(); f.go(); };
+        document.getElementById('feature-modal').classList.remove('hidden');
+
+        // Live voucher codes (shown only if the server allows this role to read them)
+        if (key === 'vouchers') {
+            try {
+                const promos = await API.getPromotions();
+                const active = (Array.isArray(promos) ? promos : []).filter(p => (p.computedStatus || p.status) === 'ACTIVE');
+                if (active.length) {
+                    extra.innerHTML = '<div class="text-[11px] font-bold text-slate-400 uppercase mb-2">Offers available now</div>' +
+                        active.map(p => {
+                            const off = p.discountType === 'FIXED_AMOUNT' ? `LKR ${p.fixedAmount} off` : `${p.discountPercentage}% off`;
+                            return `<span class="inline-block mr-2 mb-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold"><span class="font-mono">${p.code}</span> · ${off}</span>`;
+                        }).join('');
+                }
+            } catch (e) { /* not available for this role: show the description only */ }
+        }
+    },
+
+    closeFeatureInfo() {
+        document.getElementById('feature-modal').classList.add('hidden');
+    },
+
     async openReviewModal() {
         const user = AuthState.currentUser;
         if (!user || user.role !== 'CUSTOMER') return;

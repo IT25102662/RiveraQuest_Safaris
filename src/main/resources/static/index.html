@@ -190,10 +190,38 @@
         <!-- Why RiveraQuest strip -->
         <section class="max-w-7xl mx-auto px-4 pt-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="glass-card rounded-2xl p-4 text-center border-t-4 border-cyan-500"><span class="text-2xl block">🐋</span><span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Whale &amp; Dolphin Watching</span></div>
-                <div class="glass-card rounded-2xl p-4 text-center border-t-4 border-teal-500"><span class="text-2xl block">🌿</span><span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Mangrove River Tours</span></div>
-                <div class="glass-card rounded-2xl p-4 text-center border-t-4 border-amber-400"><span class="text-2xl block">🦺</span><span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Safety Audited Vessels</span></div>
-                <div class="glass-card rounded-2xl p-4 text-center border-t-4 border-amber-500"><span class="text-2xl block">🏷</span><span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Seasonal Vouchers</span></div>
+                <button type="button" onclick="App.openFeatureInfo('whale')" class="feature-tile text-left glass-card rounded-2xl overflow-hidden border-t-4 border-cyan-500">
+                    <div class="feature-photo feat-whale"></div>
+                    <div class="p-4">
+                        <div class="flex items-center gap-2 mb-1"><span class="text-xl">🐋</span><span class="text-sm font-extrabold text-slate-800">Whale &amp; Dolphin Watching</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed">Sail from Mirissa with a naturalist guide to spot whales and dolphins.</p>
+                        <span class="text-xs font-bold text-cyan-700 mt-2 inline-block">Learn more &rarr;</span>
+                    </div>
+                </button>
+                <button type="button" onclick="App.openFeatureInfo('river')" class="feature-tile text-left glass-card rounded-2xl overflow-hidden border-t-4 border-teal-500">
+                    <div class="feature-photo feat-river"></div>
+                    <div class="p-4">
+                        <div class="flex items-center gap-2 mb-1"><span class="text-xl">🌿</span><span class="text-sm font-extrabold text-slate-800">Mangrove River Tours</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed">Glide through shaded mangrove tunnels and stop at river islands.</p>
+                        <span class="text-xs font-bold text-teal-700 mt-2 inline-block">Learn more &rarr;</span>
+                    </div>
+                </button>
+                <button type="button" onclick="App.openFeatureInfo('safety')" class="feature-tile text-left glass-card rounded-2xl overflow-hidden border-t-4 border-amber-400">
+                    <div class="feature-photo feat-safety"></div>
+                    <div class="p-4">
+                        <div class="flex items-center gap-2 mb-1"><span class="text-xl">🦺</span><span class="text-sm font-extrabold text-slate-800">Safety Audited Vessels</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed">Every departure is cleared by a safety audit before it sails.</p>
+                        <span class="text-xs font-bold text-amber-700 mt-2 inline-block">Learn more &rarr;</span>
+                    </div>
+                </button>
+                <button type="button" onclick="App.openFeatureInfo('vouchers')" class="feature-tile text-left glass-card rounded-2xl overflow-hidden border-t-4 border-amber-500">
+                    <div class="feature-photo feat-vouchers"></div>
+                    <div class="p-4">
+                        <div class="flex items-center gap-2 mb-1"><span class="text-xl">🏷</span><span class="text-sm font-extrabold text-slate-800">Seasonal Vouchers</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed">Save on your booking with voucher codes checked automatically.</p>
+                        <span class="text-xs font-bold text-amber-700 mt-2 inline-block">Learn more &rarr;</span>
+                    </div>
+                </button>
             </div>
         </section>
 
@@ -1283,6 +1311,26 @@
 </div>
 
 <!-- ACCESS DENIED MODAL OVERLAY -->
+<!-- FEATURE INFO MODAL (home page highlights) -->
+<div id="feature-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4" onclick="if(event.target===this)App.closeFeatureInfo()">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div id="feature-modal-photo" class="feature-photo feature-photo-lg relative">
+            <button onclick="App.closeFeatureInfo()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/70 text-white font-bold text-sm hover:bg-slate-900" aria-label="Close">✕</button>
+        </div>
+        <div class="p-6">
+            <span id="feature-modal-tag" class="text-[10px] font-extrabold uppercase tracking-widest text-amber-600"></span>
+            <h2 id="feature-modal-title" class="text-2xl font-extrabold text-slate-900 mb-2"></h2>
+            <p id="feature-modal-text" class="text-sm text-slate-600 leading-relaxed mb-4"></p>
+            <ul id="feature-modal-points" class="space-y-2 mb-4"></ul>
+            <div id="feature-modal-extra" class="mb-4 max-h-32 overflow-y-auto"></div>
+            <div class="flex gap-3">
+                <button id="feature-modal-cta" class="flex-1 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-xl text-sm shadow transition"></button>
+                <button onclick="App.closeFeatureInfo()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="access-denied-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-8 text-center shadow-2xl border-t-8 border-rose-500">
         <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">⚠️</div>
