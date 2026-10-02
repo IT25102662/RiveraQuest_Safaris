@@ -1,47 +1,98 @@
-/* Custom Tailwind & Boat Safari System Styling */
+/* RiveraQuest Safaris - Ocean & Sand theme
+   Palette is defined in the Tailwind config in index.html (slate = deep ocean, cyan = aqua,
+   teal = lagoon, amber = sandy gold). This file adds the shared look and feel. */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary-cyan: #0284c7;
-    --primary-teal: #0d9488;
-    --primary-navy: #0f172a;
+    --ocean-950: #061827;
+    --ocean-900: #0c2338;
+    --ocean-700: #0b6b87;
+    --aqua-500: #0ea2c1;
+    --aqua-300: #5fd3e4;
+    --lagoon-600: #0c7d75;
+    --sand-50: #fdf8ee;
+    --sand-200: #f2dcab;
+    --gold-500: #d9921a;
+    --shadow-soft: 0 12px 30px -10px rgba(12, 35, 56, 0.18);
 }
+
+html { scroll-behavior: smooth; }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #f8fafc;
-    color: #1e293b;
+    color: #1a3145;
+}
+
+/* Soft sea-to-sand page background (overrides the Tailwind bg-slate-50 on <body>) */
+body.bg-slate-50 {
+    background: linear-gradient(180deg, #e9f6fa 0%, #f3f8fb 38%, #fbf6ea 100%) fixed !important;
 }
 
 h1, h2, h3, h4, h5, h6, .brand-font {
     font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.01em;
 }
 
-/* Glassmorphism Navigation */
+/* Header: deep ocean with a thin sandy-gold edge */
 .glass-nav {
-    background: rgba(15, 23, 42, 0.85);
+    background: linear-gradient(90deg, rgba(6, 24, 39, 0.96) 0%, rgba(11, 79, 108, 0.94) 100%);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(217, 146, 26, 0.55);
 }
 
-/* Hero Gradient */
+/* Hero: deep sea fading to bright aqua */
 .hero-gradient {
-    background: linear-gradient(135deg, #0f172a 0%, #0369a1 50%, #0f766e 100%);
+    background: linear-gradient(160deg, #061827 0%, #0b4f6c 48%, #0ea2c1 100%);
 }
 
-/* Glass Cards */
+/* Cards: clean white, soft aqua edge, gentle lift on hover */
 .glass-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    border: 1px solid rgba(170, 198, 216, 0.55);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+.glass-card:hover {
+    box-shadow: 0 16px 36px -10px rgba(11, 107, 135, 0.28);
+}
+
+/* Smooth fade when a page is shown */
+.view-page:not(.hidden) {
+    animation: pageFade 0.35s ease both;
+}
+@keyframes pageFade {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Wave divider helpers (used with an inline SVG) */
+.wave-divider { display: block; width: 100%; height: 60px; }
+.wave-bob { animation: waveBob 7s ease-in-out infinite; }
+@keyframes waveBob {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-24px); }
+}
+.boat-float { animation: boatFloat 4s ease-in-out infinite; }
+@keyframes boatFloat {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+/* Form controls: aqua focus ring */
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(14, 162, 193, 0.28) !important;
+}
+
+button { transition: all 0.18s ease; }
+button:not(:disabled):active { transform: translateY(1px); }
 
 /* Seat Selector Styles */
 .seat-btn {
     width: 44px;
     height: 44px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
     font-size: 0.8rem;
     display: flex;
@@ -52,27 +103,27 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 .seat-available {
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
+    background-color: #e4f7fb;
+    color: #0b6b87;
+    border: 1px solid #98e6f0;
 }
 .seat-available:hover {
-    background-color: #0284c7;
+    background-color: #0ea2c1;
     color: #ffffff;
 }
 
 .seat-selected {
-    background-color: #0d9488 !important;
+    background-color: #0c7d75 !important;
     color: #ffffff !important;
-    border: 1px solid #0f766e !important;
-    box-shadow: 0 0 10px rgba(13, 148, 136, 0.4);
+    border: 1px solid #0d645f !important;
+    box-shadow: 0 0 12px rgba(12, 125, 117, 0.45);
     transform: scale(1.05);
 }
 
 .seat-booked {
-    background-color: #f1f5f9;
-    color: #94a3b8;
-    border: 1px solid #e2e8f0;
+    background-color: #e6f0f6;
+    color: #7a9db3;
+    border: 1px solid #cfe1ec;
     cursor: not-allowed;
     text-decoration: line-through;
 }
@@ -80,22 +131,16 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 /* Badge Styles */
 .badge-available { background-color: #dcfce7; color: #166534; }
 .badge-maintenance { background-color: #fee2e2; color: #991b1b; }
-.badge-scheduled { background-color: #e0f2fe; color: #075985; }
+.badge-scheduled { background-color: #e4f7fb; color: #0b6b87; }
 .badge-confirmed { background-color: #dcfce7; color: #15803d; }
 .badge-cancelled { background-color: #fef2f2; color: #b91c1c; }
 
 /* Custom Scrollbars */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f5f9;
-}
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #e6f0f6; }
+::-webkit-scrollbar-thumb { background: #7a9db3; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #0b6b87; }
+
+@media (prefers-reduced-motion: reduce) {
+    .wave-bob, .boat-float, .view-page:not(.hidden) { animation: none !important; }
 }

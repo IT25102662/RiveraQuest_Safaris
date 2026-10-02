@@ -6,6 +6,23 @@
     <title>RiveraQuest Safaris | Boat Safari Trip Management System</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Ocean & Sand theme: remap Tailwind palettes so every page picks up the new colours
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 50:'#f3f8fb', 100:'#e6f0f6', 200:'#cfe1ec', 300:'#aac6d8', 400:'#7a9db3', 500:'#56798f', 600:'#3e5d73', 700:'#2b4559', 800:'#1a3145', 900:'#0c2338', 950:'#061827' },
+                        cyan:  { 50:'#e8fbfd', 100:'#c9f3f8', 200:'#98e6f0', 300:'#5fd3e4', 400:'#2bbad3', 500:'#0ea2c1', 600:'#0a86a6', 700:'#0b6b87', 800:'#0f566d', 900:'#124859' },
+                        teal:  { 50:'#e9faf6', 100:'#c6f1e7', 200:'#92e2d3', 300:'#58cdbd', 400:'#2ab3a4', 500:'#149a8e', 600:'#0c7d75', 700:'#0d645f', 800:'#0f504d', 900:'#104240' },
+                        amber: { 50:'#fff9eb', 100:'#fdefc8', 200:'#fbdf92', 300:'#f7c95a', 400:'#efb02e', 500:'#d9921a', 600:'#b97412', 700:'#935713', 800:'#774516', 900:'#633a16' }
+                    }
+                }
+            }
+        };
+    </script>
+    <meta name="theme-color" content="#0c2338">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B6%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
