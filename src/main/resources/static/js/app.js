@@ -233,7 +233,7 @@ case 'customer-profile-view':
 
         container.innerHTML = upcoming.map(t => `
             <div class="glass-card rounded-2xl overflow-hidden shadow-lg transition hover:shadow-2xl hover:-translate-y-1">
-                <div class="h-40 bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-5xl">🚤</div>
+                ${Scenery.html(t, 'h-44')}
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-xs font-semibold px-2.5 py-1 bg-cyan-100 text-cyan-800 rounded-full">${t.route.origin} → ${t.route.destination}</span>
@@ -560,7 +560,7 @@ case 'customer-profile-view':
                 <div class="glass-card rounded-2xl overflow-hidden shadow transition hover:shadow-xl flex flex-col justify-between ${this.isBookable(t) ? '' : 'opacity-80'}">
                     <div>
                         <div class="relative">
-                            <div class="h-32 bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-4xl ${this.isBookable(t) ? '' : 'grayscale opacity-60'}">🚤</div>
+                            ${Scenery.html(t, 'h-40', this.isBookable(t) ? '' : 'grayscale opacity-60')}
                             ${this.tripLabel(t) ? `<span class="absolute top-3 left-3 px-3 py-1 bg-rose-600 text-white text-[11px] font-extrabold rounded-full shadow">⏱ ${this.tripLabel(t)}</span>` : ''}
                         </div>
                         <div class="p-5">

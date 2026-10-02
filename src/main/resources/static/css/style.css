@@ -144,3 +144,66 @@ button:not(:disabled):active { transform: translateY(1px); }
 @media (prefers-reduced-motion: reduce) {
     .wave-bob, .boat-float, .view-page:not(.hidden) { animation: none !important; }
 }
+
+/* ---------- Stage 2/3: role menu bars and hero scene ---------- */
+.stakeholder-workspace {
+    background: linear-gradient(90deg, #0c2338 0%, #0f566d 100%) !important;
+    border-bottom: 1px solid rgba(217, 146, 26, 0.35) !important;
+}
+.stakeholder-workspace a[data-view] { color: #cfe1ec; }
+.stakeholder-workspace a[data-view]:hover { background: rgba(255, 255, 255, 0.10); color: #ffffff; }
+.stakeholder-workspace a[data-view].bg-cyan-600 {
+    background: linear-gradient(135deg, #f7c95a, #d9921a) !important;
+    color: #0c2338 !important;
+}
+.stakeholder-workspace .text-cyan-400,
+.stakeholder-workspace .text-teal-400,
+.stakeholder-workspace .text-emerald-400,
+.stakeholder-workspace .text-indigo-400,
+.stakeholder-workspace .text-amber-400 { color: #f7c95a !important; }
+
+.hero-scene { min-height: 560px; }
+.hero-sun {
+    position: absolute; top: 36px; right: 9%; width: 120px; height: 120px; border-radius: 9999px;
+    background: radial-gradient(circle, #fdefc8 0%, #f7c95a 45%, rgba(247, 201, 90, 0) 72%);
+    opacity: 0.85; z-index: 0;
+}
+.hero-birds { position: absolute; top: 70px; left: 8%; width: 180px; opacity: 0.7; z-index: 0; animation: birdDrift 14s ease-in-out infinite; }
+@keyframes birdDrift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(40px); } }
+.hero-waves { position: relative; z-index: 5; margin-top: -8px; overflow: hidden; line-height: 0; }
+@media (prefers-reduced-motion: reduce) { .hero-birds { animation: none !important; } }
+
+/* ---------- Stage 3b: photo hero + picture cards ---------- */
+/* Photo layers: your own img/hero.jpg first, then a stock sea photo, then the colour gradient underneath */
+.hero-photo {
+    background-image:
+        linear-gradient(180deg, rgba(6, 24, 39, 0.62) 0%, rgba(6, 24, 39, 0.38) 55%, rgba(6, 24, 39, 0.18) 100%),
+        url('../img/hero.jpg'),
+        url('https://images.pexels.com/photos/8300146/pexels-photo-8300146.jpeg?auto=compress&cs=tinysrgb&w=1920'),
+        linear-gradient(160deg, #061827 0%, #0b4f6c 48%, #0ea2c1 100%);
+    background-size: cover;
+    background-position: center;
+}
+.hero-photo .hero-sun, .hero-photo .hero-birds, .hero-photo .hero-boat-wrap { display: none; }
+.hero-photo { min-height: 520px; }
+.hero-photo h1, .hero-photo p { text-shadow: 0 2px 14px rgba(6, 24, 39, 0.75); }
+
+.scenery {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.4s ease;
+}
+.scenery::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(6, 24, 39, 0) 55%, rgba(6, 24, 39, 0.35) 100%);
+}
+.glass-card:hover .scenery { transform: scale(1.03); }
+.scenery-tag {
+    position: absolute; left: 12px; bottom: 10px; z-index: 2;
+    padding: 3px 10px; border-radius: 9999px; font-size: 10px; font-weight: 800;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    background: rgba(6, 24, 39, 0.72); color: #f7c95a; backdrop-filter: blur(4px);
+}
+.glass-card:has(> .scenery), .glass-card:has(.scenery) { overflow: hidden; }
