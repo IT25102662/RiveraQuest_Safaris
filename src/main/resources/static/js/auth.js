@@ -1,7 +1,7 @@
 // Auth & Role Session Manager for Boat Safari Management System
 
 const ROLE_DASHBOARDS = {
-    CUSTOMER: 'tourist-dashboard-view',
+    CUSTOMER: 'home-view',
     DESK_OFFICER: 'desk-dashboard-view',
     FLEET_MANAGER: 'fleet-dashboard-view',
     SAFETY_OFFICER: 'safety-dashboard-view',
@@ -52,7 +52,7 @@ const AuthState = {
             showToast(`Welcome back, ${res.fullName}! Authenticated as ${res.role}`);
             
             // Redirect to designated role dashboard
-            const targetDashboard = ROLE_DASHBOARDS[res.role] || 'tourist-dashboard-view';
+            const targetDashboard = ROLE_DASHBOARDS[res.role] || 'home-view';
             if (window.App) {
                 window.App.navigate(targetDashboard);
             }
@@ -72,7 +72,7 @@ const AuthState = {
     },
 
     getDashboardForRole(role) {
-        return ROLE_DASHBOARDS[role] || 'tourist-dashboard-view';
+        return ROLE_DASHBOARDS[role] || 'home-view';
     },
 
     updateWorkspaceInfo() {
