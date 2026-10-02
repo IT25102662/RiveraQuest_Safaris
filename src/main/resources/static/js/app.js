@@ -24,6 +24,7 @@ const VIEW_PERMISSIONS = {
 
     // Safety Officer Workspace
     'safety-dashboard-view': ['SAFETY_OFFICER', 'ADMIN'],
+    'safety-records-view': ['SAFETY_OFFICER', 'ADMIN'],
     'safety-checklist-view': ['SAFETY_OFFICER', 'DESK_OFFICER', 'ADMIN'],
 
     // Marketing Officer Workspace
@@ -133,6 +134,9 @@ const App = {
                 case 'safety-dashboard-view':
                     await this.renderSafetyDashboard();
                     break;
+                case 'safety-records-view':
+                    await this.renderSafetyRecords();
+                    break;
                 case 'marketing-dashboard-view':
                     await this.renderMarketingDashboard();
                     break;
@@ -233,7 +237,7 @@ case 'customer-profile-view':
 
         container.innerHTML = upcoming.map(t => `
             <div class="glass-card rounded-2xl overflow-hidden shadow-lg transition hover:shadow-2xl hover:-translate-y-1">
-                ${Scenery.html(t, 'h-44')}
+                ${Scenery.html(t, 'h-52')}
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-xs font-semibold px-2.5 py-1 bg-cyan-100 text-cyan-800 rounded-full">${t.route.origin} → ${t.route.destination}</span>
@@ -267,7 +271,7 @@ case 'customer-profile-view':
                 upcomingContainer.innerHTML = active.map(b => `
                     <div class="glass-card p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-cyan-500">
                         <div class="flex items-center gap-4 flex-1 min-w-0">
-                        <div class="w-36 shrink-0">${Scenery.html(b.trip, 'h-24', 'rounded-xl overflow-hidden')}</div>
+                        <div class="w-36 shrink-0">${Scenery.html(b.trip, 'h-28', 'rounded-xl overflow-hidden')}</div>
                         <div>
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="font-mono font-bold text-cyan-700">${b.bookingReference}</span>
@@ -472,20 +476,112 @@ case 'customer-profile-view':
     // 5. Safety Officer Dashboard
     async renderSafetyDashboard() {
         const trips = await API.getTrips();
+        let checklists = [];
+        try { checklists = await API.getAllSafetyChecklists(); } catch (e) { checklists = []; }
+        const byTrip = {};
+        (Array.isArray(checklists) ? checklists : []).forEach(c => { if (c.trip) byTrip[c.trip.id] = c; });
+
+        let cleared = 0, hold = 0, pending = 0;
+        const badge = {
+            CLEARED: '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">Cleared</span>',
+            HOLD: '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800">On Hold</span>',
+            PENDING: '<span class="px-2.5 py-1 text-xs font-bold rounded-full whitespace-nowrap bg-amber-100 text-amber-800">Awaiting Audit</span>'
+        };
         const tbody = document.getElementById('safety-trips-table');
         if (tbody) {
-            tbody.innerHTML = trips.map(t => `
+            tbody.innerHTML = trips.map(t => {
+                const c = byTrip[t.id];
+                const st = c ? (c.departureApproved ? 'CLEARED' : 'HOLD') : 'PENDING';
+                if (st === 'CLEARED') cleared++; else if (st === 'HOLD') hold++; else pending++;
+                return `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
                     <td class="p-3 font-bold text-slate-800 text-xs">${t.route.origin} → ${t.route.destination}</td>
                     <td class="p-3 text-xs text-slate-600">${t.boat.name} (${t.boat.registrationNumber})</td>
                     <td class="p-3 text-xs font-semibold text-cyan-700">${t.tripDate} ${t.departureTime}</td>
                     <td class="p-3 text-xs font-semibold text-slate-700">${t.bookedSeats} / ${t.boat.capacity} Passengers</td>
                     <td class="p-3"><span class="px-2.5 py-1 text-xs font-bold rounded-full badge-scheduled">${t.status}</span></td>
+                    <td class="p-3">${badge[st]}</td>
                     <td class="p-3">
-                        <button onclick="App.navigate('safety-checklist-view', {tripId: ${t.id}})" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold shadow hover:bg-emerald-700">Audit Safety Clearance →</button>
+                        <button onclick="App.navigate('safety-checklist-view', {tripId: ${t.id}})" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold shadow hover:bg-emerald-700">${c ? 'Review / Edit Audit →' : 'Start Safety Audit →'}</button>
                     </td>
-                </tr>
-            `).join('');
+                </tr>`;
+            }).join('');
+        }
+        document.getElementById('saf-count-cleared').textContent = cleared;
+        document.getElementById('saf-count-hold').textContent = hold;
+        document.getElementById('saf-count-pending').textContent = pending;
+    },
+
+    // 5b. Safety Inspection Records (Read / Update / Hold / Delete)
+    async renderSafetyRecords() {
+        try {
+            this.safetyRecords = await API.getAllSafetyChecklists();
+        } catch (e) {
+            this.safetyRecords = [];
+            showToast(e.message, 'error');
+        }
+        this.filterSafetyRecords();
+    },
+
+    filterSafetyRecords() {
+        const tbody = document.getElementById('safety-records-table');
+        if (!tbody) return;
+        const q = (document.getElementById('safety-record-search').value || '').toLowerCase().trim();
+        const f = document.getElementById('safety-record-filter').value;
+        const rows = (this.safetyRecords || []).filter(c => {
+            const st = c.departureApproved ? 'CLEARED' : 'HOLD';
+            if (f !== 'ALL' && st !== f) return false;
+            const text = `${c.trip.route.origin} ${c.trip.route.destination} ${c.trip.boat.name} ${c.inspectorName || ''}`.toLowerCase();
+            return !q || text.includes(q);
+        }).sort((x, y) => String(y.inspectionTime).localeCompare(String(x.inspectionTime)));
+
+        if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-xs text-slate-400">No safety inspection records found.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = rows.map(c => `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="p-3 text-xs"><div class="font-bold text-slate-800">${c.trip.route.origin} → ${c.trip.route.destination}</div><div class="text-cyan-700 font-semibold">${c.trip.tripDate} ${c.trip.departureTime}</div></td>
+                <td class="p-3 text-xs text-slate-600">${c.trip.boat.name}</td>
+                <td class="p-3 text-xs text-slate-700">${c.inspectorName || '-'}</td>
+                <td class="p-3 text-xs text-slate-600">
+                    <div>🦺 ${c.lifeJacketsChecked ? c.lifeJacketCount + ' checked' : '<span class="text-rose-600 font-bold">not checked</span>'} · 🩹 ${c.firstAidKitChecked ? 'kit OK' : '<span class="text-rose-600 font-bold">missing</span>'}</div>
+                    <div>🌦 ${c.weatherAdvisoryStatus}</div>
+                    ${c.comments ? `<div class="text-slate-400 italic">${c.comments}</div>` : ''}
+                </td>
+                <td class="p-3 text-xs text-slate-500">${String(c.inspectionTime || '').replace('T', ' ').substring(0, 16)}</td>
+                <td class="p-3">${c.departureApproved
+                    ? '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">Cleared</span>'
+                    : '<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800">On Hold</span>'}</td>
+                <td class="p-3"><div class="flex flex-wrap gap-1.5">
+                    <button onclick="App.navigate('safety-checklist-view', {tripId: ${c.trip.id}})" class="px-2.5 py-1 bg-slate-800 text-white rounded-lg text-xs font-bold">Edit</button>
+                    <button onclick="App.deleteSafetyRecord(${c.trip.id})" class="px-2.5 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold">Delete</button>
+                </div></td>
+            </tr>`).join('');
+    },
+
+    async deleteSafetyRecord(tripId) {
+        if (!confirm('Delete this safety audit record? The trip will return to "Awaiting Audit". This cannot be undone.')) return;
+        try {
+            await API.deleteSafetyChecklist(tripId);
+            showToast('Safety audit record deleted.');
+            this.navigate('safety-records-view');
+        } catch (e) {
+            showToast(e.message, 'error');
+        }
+    },
+
+    async holdSafetyDeparture() {
+        const reason = prompt('Reason for placing this departure on safety hold:');
+        if (reason === null) return;
+        if (!reason.trim()) { showToast('A reason is required to place a departure on hold.', 'error'); return; }
+        try {
+            const inspector = document.getElementById('safety-inspector-name').value || AuthState.currentUser.fullName;
+            await API.holdDeparture(this.currentTripIdForSafety, inspector, reason.trim());
+            showToast('Departure placed on safety hold.');
+            this.renderSafetyChecklist(this.currentTripIdForSafety);
+        } catch (e) {
+            showToast(e.message, 'error');
         }
     },
 
@@ -563,7 +659,7 @@ case 'customer-profile-view':
                 <div class="glass-card rounded-2xl overflow-hidden shadow transition hover:shadow-xl flex flex-col justify-between ${this.isBookable(t) ? '' : 'opacity-80'}">
                     <div>
                         <div class="relative">
-                            ${Scenery.html(t, 'h-40', this.isBookable(t) ? '' : 'grayscale opacity-60')}
+                            ${Scenery.html(t, 'h-52', this.isBookable(t) ? '' : 'grayscale opacity-60')}
                             ${this.tripLabel(t) ? `<span class="absolute top-3 left-3 px-3 py-1 bg-rose-600 text-white text-[11px] font-extrabold rounded-full shadow">⏱ ${this.tripLabel(t)}</span>` : ''}
                         </div>
                         <div class="p-5">
@@ -848,7 +944,7 @@ case 'customer-profile-view':
         document.getElementById('promo-code-input').value = '';
 
         const photoBox = document.getElementById('booking-trip-photo');
-        if (photoBox) photoBox.innerHTML = Scenery.html(trip, 'h-48', 'rounded-2xl mb-5 overflow-hidden');
+        if (photoBox) photoBox.innerHTML = Scenery.html(trip, 'h-60', 'rounded-2xl mb-5 overflow-hidden');
         document.getElementById('booking-trip-title').textContent = `${trip.route.origin} → ${trip.route.destination}`;
         document.getElementById('booking-trip-time').textContent = `${trip.tripDate} ${trip.departureTime}`;
         document.getElementById('booking-trip-boat').textContent = `${trip.boat.name} (${trip.boat.capacity} Max Capacity)`;
@@ -1029,6 +1125,7 @@ case 'customer-profile-view':
 
         try {
             const safety = await API.getSafetyChecklist(tripId);
+            document.getElementById('safety-existing-actions').classList.remove('hidden');
             document.getElementById('lifejackets-check').checked = safety.lifeJacketsChecked;
             document.getElementById('lifejackets-count').value = safety.lifeJacketCount;
             document.getElementById('firstaid-check').checked = safety.firstAidKitChecked;
@@ -1046,13 +1143,28 @@ case 'customer-profile-view':
                 statusBadge.textContent = '⛔ DEPARTURE HOLD ON SAFETY';
             }
         } catch (e) {
+            document.getElementById('safety-existing-actions').classList.add('hidden');
+            document.getElementById('lifejackets-check').checked = false;
             document.getElementById('lifejackets-count').value = trip.boat.capacity;
+            document.getElementById('firstaid-check').checked = false;
+            document.getElementById('emergency-contact').value = '+94 77 123 4567';
+            document.getElementById('weather-status').value = 'CLEAR';
+            document.getElementById('safety-inspector-name').value = AuthState.currentUser.fullName;
+            document.getElementById('safety-comments').value = '';
+            const statusBadge = document.getElementById('departure-status-badge');
+            statusBadge.className = 'px-3 py-1 bg-amber-100 text-amber-800 font-bold rounded-full text-xs';
+            statusBadge.textContent = 'PENDING SAFETY AUDIT';
         }
 
         this.currentTripIdForSafety = tripId;
     },
 
     async saveSafetyChecklist() {
+        const count = parseInt(document.getElementById('lifejackets-count').value);
+        const phone = document.getElementById('emergency-contact').value.trim();
+        if (isNaN(count) || count < 0) { showToast('Life jacket count must be zero or more.', 'error'); return; }
+        if (!/^[+0-9][0-9 ()-]{6,19}$/.test(phone)) { showToast('Enter a valid emergency contact number.', 'error'); return; }
+        if (!document.getElementById('safety-inspector-name').value.trim()) { showToast('Inspector name is required.', 'error'); return; }
         const payload = {
             lifeJacketsChecked: document.getElementById('lifejackets-check').checked,
             lifeJacketCount: parseInt(document.getElementById('lifejackets-count').value),
