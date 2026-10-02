@@ -5,25 +5,32 @@ import com.boatsafari.exception.ResourceNotFoundException;
 import com.boatsafari.model.DiscountType;
 import com.boatsafari.model.MarketingOfficer;
 import com.boatsafari.model.Promotion;
+import com.boatsafari.model.Trip;
 import com.boatsafari.model.VoucherStatus;
 import com.boatsafari.repository.MarketingOfficerRepository;
 import com.boatsafari.repository.PromotionRepository;
+import com.boatsafari.repository.TripRepository;
 import com.boatsafari.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PromotionServiceImpl implements PromotionService {
-
     @Autowired
     private PromotionRepository promotionRepository;
-
+    
     @Autowired
     private MarketingOfficerRepository marketingOfficerRepository;
-
+    
+    @Autowired
+    private TripRepository tripRepository;
+    
     private void validate(Promotion promotion) {
         if (promotion.getCode() == null || promotion.getCode().trim().isEmpty()) {
             throw new BusinessRuleException("Voucher code is required.");
@@ -51,7 +58,6 @@ public class PromotionServiceImpl implements PromotionService {
             throw new BusinessRuleException("Usage limit cannot be negative.");
         }
     }
-
     @Override
     public Promotion createPromotion(Long marketingOfficerId, Promotion promotion) {
         validate(promotion);
@@ -67,45 +73,44 @@ public class PromotionServiceImpl implements PromotionService {
         MarketingOfficer officer;
         if (marketingOfficerId != null) {
             officer = marketingOfficerRepository.findById(marketingOfficerId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Marketing Officer not found with ID: " + marketingOfficerId));
+                .orElseThrow(() -> new ResourceNotFoundException("Marketing Officer not found with ID: " + marketingOfficerId));
         } else {
             officer = marketingOfficerRepository.findAll().stream().findFirst()
-                    .orElseThrow(() -> new BusinessRuleException("No Marketing Officer on record to attribute this promotion to."));
+                .orElseThrow(() -> new BusinessRuleException("No Marketing Officer on record to attribute this promotion to."));
         }
         promotion.setCreatedBy(officer);
 
         return promotionRepository.save(promotion);
     }
-
     @Override
     public List<Promotion> getAllPromotions() {
         return promotionRepository.findAll();
     }
-
+    
     @Override
     public Promotion getPromotionById(Long id) {
         return promotionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with ID: " + id));
     }
-
+    
     @Override
     public Promotion getPromotionByCode(String code) {
         return promotionRepository.findByCodeIgnoreCase(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Promotion code not found: " + code));
+            .orElseThrow(() -> new ResourceNotFoundException("Promotion code not found: " + code));
     }
 
     @Override
     public Promotion updatePromotion(Long id, Promotion promotion) {
         Promotion existing = promotionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with ID: " + id));
-
+            .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with ID: " + id));
+        
         validate(promotion);
 
         Optional<Promotion> codeOwner = promotionRepository.findByCodeIgnoreCase(promotion.getCode().trim());
         if (codeOwner.isPresent() && !codeOwner.get().getId().equals(id)) {
             throw new BusinessRuleException("Promotion code '" + promotion.getCode() + "' is already used by another voucher!");
         }
-
+        
         existing.setCode(promotion.getCode().trim());
         existing.setTitle(promotion.getTitle());
         existing.setDescription(promotion.getDescription());
@@ -119,21 +124,17 @@ public class PromotionServiceImpl implements PromotionService {
         existing.setUsageLimit(promotion.getUsageLimit());
         existing.setStatus(promotion.getStatus() == null ? VoucherStatus.ACTIVE : promotion.getStatus());
         existing.setActive(existing.getStatus() != VoucherStatus.INACTIVE);
+        
         if (promotion.getReportStatus() != null) {
             existing.setReportStatus(promotion.getReportStatus());
         }
-
         return promotionRepository.save(existing);
     }
-
     @Override
     public void deletePromotion(Long id) {
         Promotion existing = promotionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with ID: " + id));
-
+            .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with ID: " + id));
         if (existing.getUsageCount() != null && existing.getUsageCount() > 0) {
-            // Already redeemed by tourists — deactivate instead of hard-deleting,
-            // so past bookings' history stays meaningful.
             existing.setStatus(VoucherStatus.INACTIVE);
             existing.setActive(false);
             promotionRepository.save(existing);
@@ -141,17 +142,35 @@ public class PromotionServiceImpl implements PromotionService {
             promotionRepository.delete(existing);
         }
     }
-
+    
     @Override
     public List<Promotion> searchPromotions(String keyword, String statusFilter) {
         String kw = keyword == null ? "" : keyword.trim().toLowerCase();
-
         return promotionRepository.findAll().stream()
-                .filter(p -> kw.isEmpty()
-                        || (p.getCode() != null && p.getCode().toLowerCase().contains(kw))
-                        || (p.getTitle() != null && p.getTitle().toLowerCase().contains(kw)))
-                .filter(p -> statusFilter == null || statusFilter.isEmpty() || "ALL".equalsIgnoreCase(statusFilter)
-                        || p.getComputedStatus().name().equalsIgnoreCase(statusFilter))
-                .toList();
+            .filter(p -> kw.isEmpty()
+                    || (p.getCode() != null && p.getCode().toLowerCase().contains(kw))
+                    || (p.getTitle() != null && p.getTitle().toLowerCase().contains(kw)))
+            .filter(p -> statusFilter == null || statusFilter.isEmpty() || "ALL".equalsIgnoreCase(statusFilter)
+                    || p.getComputedStatus().name().equalsIgnoreCase(statusFilter))
+             .toList();
+    }
+    @Override
+    public Promotion setApplicableTrips(Long promotionId, List<Long> tripIds) {
+        Promotion promotion = getPromotionById(promotionId);
+        if (tripIds == null || tripIds.isEmpty()) {
+            promotion.setApplicableTrips(new HashSet<>());
+        } else {
+            Set<Trip> trips = tripIds.stream()
+                .map(id -> tripRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Trip not found with ID: " + id)))
+                .collect(Collectors.toSet());
+            promotion.setApplicableTrips(trips);
+        }
+        return promotionRepository.save(promotion);
+    }
+    @Override
+    public List<Long> getApplicableTripIds(Long promotionId) {
+        Promotion promotion = getPromotionById(promotionId);
+        return promotion.getApplicableTrips().stream().map(Trip::getId).collect(Collectors.toList());
     }
 }

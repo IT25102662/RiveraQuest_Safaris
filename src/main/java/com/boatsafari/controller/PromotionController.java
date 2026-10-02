@@ -26,11 +26,11 @@ public class PromotionController {
     public ResponseEntity<List<Promotion>> getAllPromotions() {
         return ResponseEntity.ok(promotionService.getAllPromotions());
     }
-
+    
     @GetMapping("/search")
     public ResponseEntity<List<Promotion>> searchPromotions(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String status) {
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String status) {
         return ResponseEntity.ok(promotionService.searchPromotions(keyword, status));
     }
 
@@ -53,5 +53,15 @@ public class PromotionController {
     public ResponseEntity<Void> deletePromotion(@PathVariable Long id) {
         promotionService.deletePromotion(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PutMapping("/{id}/trips")
+    public ResponseEntity<Promotion> setApplicableTrips(@PathVariable Long id, @RequestBody List<Long> tripIds) {
+        return ResponseEntity.ok(promotionService.setApplicableTrips(id, tripIds));
+    }
+
+    @GetMapping("/{id}/trips")
+    public ResponseEntity<List<Long>> getApplicableTrips(@PathVariable Long id) {
+        return ResponseEntity.ok(promotionService.getApplicableTripIds(id));
     }
 }

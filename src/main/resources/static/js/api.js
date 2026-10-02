@@ -130,7 +130,13 @@ const API = {
         body: JSON.stringify(promo)
     }).then(res => handleRes(res)),
     deletePromotion: (id) => fetch(`${API_BASE}/promotions/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
-
+    getApplicableTrips: (id) => fetch(`${API_BASE}/promotions/${id}/trips`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
+    setApplicableTrips: (id, tripIds) => fetch(`${API_BASE}/promotions/${id}/trips`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(tripIds)
+    }).then(res => handleRes(res)),
+    
     // Review APIs
     getReviews: (tripId) => fetch(`${API_BASE}/reviews${tripId ? '?tripId=' + tripId : ''}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     searchReviews: (keyword, rating, status) => {

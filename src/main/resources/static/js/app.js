@@ -1094,6 +1094,10 @@ case 'customer-profile-view':
         document.getElementById('voucher-status').value = 'ACTIVE';
         this.toggleVoucherDiscountFields();
 
+        const trips = await API.getTrips();
+        const tripSelect = document.getElementById('voucher-applicable-trips');
+        tripSelect.innerHTML = trips.map(t => `<option value="${t.id}">${t.route.origin} → ${t.route.destination} (${t.tripDate})</option>`).join('');
+
         if (id) {
             try {
                 const p = await API.getPromotion(id);
@@ -1112,6 +1116,11 @@ case 'customer-profile-view':
                 document.getElementById('voucher-status').value = p.status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE';
                 this.toggleVoucherDiscountFields();
                 document.getElementById('voucher-modal-title').textContent = 'Edit Voucher';
+
+                const applicableIds = await API.getApplicableTrips(id);
+                Array.from(tripSelect.options).forEach(opt => {
+                    opt.selected = applicableIds.includes(parseInt(opt.value));
+                });
             } catch (e) {
                 showToast(e.message, 'error');
                 return;
@@ -1147,15 +1156,20 @@ case 'customer-profile-view':
             return;
         }
 
+        const selectedTripIds = Array.from(document.getElementById('voucher-applicable-trips').selectedOptions).map(opt => parseInt(opt.value));
+
         try {
+            let savedPromo;
             if (id) {
-                await API.updatePromotion(id, payload);
+                savedPromo = await API.updatePromotion(id, payload);
                 showToast('Voucher updated successfully.');
             } else {
                 const user = AuthState.currentUser;
                 const marketingOfficerId = user && user.role === 'MARKETING_OFFICER' ? user.id : null;
-                await API.createPromotion(payload, marketingOfficerId);                showToast('Voucher created successfully.');
+                savedPromo = await API.createPromotion(payload, marketingOfficerId);
+                showToast('Voucher created successfully.');
             }
+            await API.setApplicableTrips(savedPromo.id, selectedTripIds);
             document.getElementById('voucher-modal').classList.add('hidden');
             this.filterVouchers();
         } catch (e) {
