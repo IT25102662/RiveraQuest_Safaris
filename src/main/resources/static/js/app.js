@@ -1406,7 +1406,7 @@ case 'customer-profile-view':
     },
 
     // User Management View
-    async renderUserManagement() {
+       async renderUserManagement() {
         const users = await API.getUsers();
         const tbody = document.getElementById('users-table-body');
         if (tbody) {
@@ -1417,8 +1417,24 @@ case 'customer-profile-view':
                     <td class="p-3 font-mono text-xs text-slate-600">${u.phoneNumber}</td>
                     <td class="p-3 text-xs font-bold text-cyan-700">${u.role}</td>
                     <td class="p-3"><span class="px-2 py-0.5 text-xs rounded-full ${u.status === 'ACTIVE' ? 'badge-confirmed' : 'badge-cancelled'}">${u.status}</span></td>
+                    <td class="p-3">
+                        <button onclick="App.toggleUserStatus(${u.id}, '${u.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'}')" class="px-2.5 py-1 text-xs font-medium rounded-lg ${u.status === 'ACTIVE' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700'} text-white">
+                            ${u.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+                        </button>
+                    </td>
                 </tr>
             `).join('');
+        }
+    },
+
+    async toggleUserStatus(id, newStatus) {
+        if (!confirm(`Are you sure you want to set this user's status to ${newStatus}?`)) return;
+        try {
+            await API.updateUserStatus(id, newStatus);
+            showToast(`User status updated to ${newStatus}.`);
+            this.renderUserManagement();
+        } catch (e) {
+            showToast(e.message, 'error');
         }
     },
 
