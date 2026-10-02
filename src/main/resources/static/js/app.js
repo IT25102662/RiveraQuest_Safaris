@@ -798,6 +798,9 @@ case 'customer-profile-view':
         const trip = await API.getTrip(tripId);
         this.currentTrip = trip;
         this.selectedSeats = [];
+        this.currentDiscountAmount = 0;
+        this.currentPromoCode = '';
+        document.getElementById('promo-code-input').value = '';
 
         document.getElementById('booking-trip-title').textContent = `${trip.route.origin} → ${trip.route.destination}`;
         document.getElementById('booking-trip-time').textContent = `${trip.tripDate} ${trip.departureTime}`;
@@ -835,6 +838,11 @@ case 'customer-profile-view':
             this.selectedSeats.push(seatNum);
             btnEl.classList.add('seat-selected');
         }
+        if (this.currentPromoCode) {
+            this.currentDiscountAmount = 0;
+            this.currentPromoCode = '';
+            showToast('Seat selection changed. Please re-apply your voucher.', 'error');
+        }
         this.updateBookingSummary();
     },
 
@@ -855,21 +863,19 @@ case 'customer-profile-view':
     async applyPromoCode() {
         const codeInput = document.getElementById('promo-code-input').value.trim();
         if (!codeInput) return showToast('Please enter a voucher code', 'error');
+        if (this.selectedSeats.length === 0) return showToast('Please select at least 1 seat before applying a voucher.', 'error');
 
         try {
-            const promo = await API.getPromotions().then(promos => promos.find(p => p.code.toLowerCase() === codeInput.toLowerCase()));
-            if (!promo || !promo.active) {
-                throw new Error('Invalid or inactive voucher code!');
-            }
-            const unitPrice = this.currentTrip.price;
-            const subtotal = this.selectedSeats.length * unitPrice;
-            this.currentDiscountAmount = (subtotal * promo.discountPercentage) / 100.0;
-            this.currentPromoCode = promo.code;
-            showToast(`Promo Applied! ${promo.discountPercentage}% discount saved.`);
-            this.updateBookingSummary();
+            const result = await API.validatePromotion(codeInput, this.currentTrip.id, this.selectedSeats.length);
+            this.currentDiscountAmount = result.discountAmount;
+            this.currentPromoCode = result.code;
+            showToast(`Voucher applied! You saved LKR ${result.discountAmount.toLocaleString()}.`);
         } catch (e) {
+            this.currentDiscountAmount = 0;
+            this.currentPromoCode = '';
             showToast(e.message, 'error');
         }
+        this.updateBookingSummary();
     },
 
     async submitBooking() {
