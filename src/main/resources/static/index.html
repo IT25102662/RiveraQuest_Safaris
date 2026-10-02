@@ -107,7 +107,7 @@
     <div class="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto py-2.5 text-xs font-semibold">
         <span class="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mr-2">🦺 Safety Operations:</span>
         <a href="#" onclick="App.navigate('safety-dashboard-view')" data-view="safety-dashboard-view" class="px-3 py-1.5 rounded-lg transition">Dashboard</a>
-        <a href="#" onclick="App.navigate('safety-dashboard-view')" data-view="safety-dashboard-view" class="px-3 py-1.5 rounded-lg transition">Upcoming Departures</a>
+        <a href="#" onclick="App.navigate('safety-records-view')" data-view="safety-records-view" class="px-3 py-1.5 rounded-lg transition">Inspection Records</a>
     </div>
 </div>
 
@@ -375,6 +375,12 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-emerald-500"><p class="text-xs font-bold text-slate-400 uppercase">Cleared for Departure</p><p id="saf-count-cleared" class="text-3xl font-extrabold text-emerald-600">0</p></div>
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-rose-500"><p class="text-xs font-bold text-slate-400 uppercase">On Safety Hold</p><p id="saf-count-hold" class="text-3xl font-extrabold text-rose-600">0</p></div>
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-amber-500"><p class="text-xs font-bold text-slate-400 uppercase">Awaiting Audit</p><p id="saf-count-pending" class="text-3xl font-extrabold text-amber-600">0</p></div>
+        </div>
+
         <h2 class="text-xl font-bold text-slate-800 mb-4">Upcoming Departures Awaiting Clearance Audit</h2>
         <div class="glass-card rounded-2xl overflow-hidden shadow">
             <table class="w-full text-left border-collapse">
@@ -384,7 +390,8 @@
                     <th class="p-3">Vessel Assigned</th>
                     <th class="p-3">Departure Time</th>
                     <th class="p-3">Occupancy</th>
-                    <th class="p-3">Status</th>
+                    <th class="p-3">Trip Status</th>
+                    <th class="p-3">Safety Audit</th>
                     <th class="p-3">Safety Action</th>
                 </tr>
                 </thead>
@@ -737,6 +744,35 @@
         </div>
     </div>
 
+    <!-- 15b. SAFETY INSPECTION RECORDS VIEW -->
+    <div id="safety-records-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
+        <div class="page-banner banner-whale"><div><h1 class="text-3xl font-extrabold">Safety Inspection Records</h1><p class="text-cyan-50 text-sm mt-1">Review, update, hold or remove every pre-departure audit</p></div></div>
+        <div class="glass-card rounded-2xl p-4 mb-4 flex flex-wrap items-center gap-3">
+            <input type="text" id="safety-record-search" oninput="App.filterSafetyRecords()" placeholder="Search route, vessel or inspector..." class="flex-1 min-w-[200px] px-4 py-2 bg-slate-100 rounded-xl text-xs border-0">
+            <select id="safety-record-filter" onchange="App.filterSafetyRecords()" class="px-3 py-2 bg-slate-100 rounded-xl text-xs font-bold border-0">
+                <option value="ALL">All Records</option>
+                <option value="CLEARED">Cleared</option>
+                <option value="HOLD">On Hold</option>
+            </select>
+        </div>
+        <div class="glass-card rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">
+                <tr>
+                    <th class="p-3">Trip</th>
+                    <th class="p-3">Vessel</th>
+                    <th class="p-3">Inspector</th>
+                    <th class="p-3">Gear &amp; Weather</th>
+                    <th class="p-3">Inspected</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="safety-records-table"></tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- 16. SAFETY CHECKLIST VIEW -->
     <div id="safety-checklist-view" class="view-page hidden max-w-4xl mx-auto px-4 py-10">
         <div class="glass-card p-8 rounded-3xl shadow-xl">
@@ -788,6 +824,10 @@
             <div class="flex gap-4">
                 <button onclick="App.saveSafetyChecklist()" class="flex-1 py-3 bg-slate-800 text-white font-bold rounded-2xl text-xs">Save Checklist Data</button>
                 <button onclick="App.approveDeparture()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl text-xs shadow-lg shadow-emerald-600/30">Grant Official Departure Clearance →</button>
+            </div>
+            <div id="safety-existing-actions" class="flex gap-4 mt-4 hidden">
+                <button onclick="App.holdSafetyDeparture()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl text-xs">⛔ Place Departure on Hold</button>
+                <button onclick="App.deleteSafetyRecord(App.currentTripIdForSafety)" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl text-xs">🗑 Delete This Audit Record</button>
             </div>
         </div>
     </div>

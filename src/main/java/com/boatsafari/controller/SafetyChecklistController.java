@@ -29,4 +29,13 @@ public class SafetyChecklistController {
   public ResponseEntity<SafetyChecklist> approveDeparture(@PathVariable Long tripId, @RequestParam String inspectorName) {
       return ResponseEntity.ok(safetyChecklistService.approveDeparture(tripId, inspectorName));
   }
+  @PutMapping("/trip/{tripId}/hold")
+  public ResponseEntity<SafetyChecklist> holdDeparture(@PathVariable Long tripId, @RequestParam String inspectorName, @RequestParam String reason) {
+      return ResponseEntity.ok(safetyChecklistService.holdDeparture(tripId, inspectorName, reason));
+  }
+  @DeleteMapping("/trip/{tripId}")
+  public ResponseEntity<Void> deleteChecklist(@PathVariable Long tripId) {
+      safetyChecklistService.deleteChecklist(tripId);
+      return ResponseEntity.noContent().build();
+  }
 }
