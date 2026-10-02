@@ -308,3 +308,37 @@ button:not(:disabled):active { transform: translateY(1px); }
 [id$="-modal"]:not(#feature-modal):not(#access-denied-modal) button.bg-slate-900 {
     background: linear-gradient(135deg, #0c2338, #0b6b87);
 }
+
+/* ---------- Stage 8: varied voucher cards ---------- */
+.voucher-card { border-left: 4px solid var(--vc); }
+.vt-0 { --vc: #0e9bb8; --vc-soft: #dff4f9; --vc-dark: #0b5f76; }
+.vt-1 { --vc: #d9921a; --vc-soft: #fdf0cf; --vc-dark: #8a5a0a; }
+.vt-2 { --vc: #0f8f7a; --vc-soft: #d9f3ec; --vc-dark: #0a5e50; }
+.vt-3 { --vc: #e0566b; --vc-soft: #fde4ea; --vc-dark: #9a2a3f; }
+.voucher-code { color: var(--vc-dark); }
+.voucher-card .voucher-strip { height: 92px; position: relative; background-size: cover; background-position: center; }
+.voucher-off {
+    position: absolute; right: 14px; bottom: 10px; padding: 4px 12px; border-radius: 9999px;
+    background: #ffffff; color: var(--vc-dark); font-size: 12px; font-weight: 800; letter-spacing: 0.03em;
+    box-shadow: 0 4px 12px rgba(6, 24, 39, 0.28);
+}
+.vs-0 { background-image: linear-gradient(135deg, rgba(14, 155, 184, 0.55), rgba(6, 24, 39, 0.35)), url('../img/river-banner.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0e9bb8, #0c2338); }
+.vs-1 { background-image: linear-gradient(135deg, rgba(217, 146, 26, 0.50), rgba(6, 24, 39, 0.35)), url('../img/whale-banner.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #d9921a, #0c2338); }
+.vs-2 { background-image: linear-gradient(135deg, rgba(15, 143, 122, 0.50), rgba(6, 24, 39, 0.30)), url('../img/reef-banner.jpg'), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0f8f7a, #0c2338); }
+.vs-3 { background-image: linear-gradient(135deg, rgba(224, 86, 107, 0.45), rgba(6, 24, 39, 0.30)), url('../img/coast-banner.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #e0566b, #0c2338); }
+
+/* ---------- Stage 9: tick-box trip pickers ---------- */
+.trip-checklist {
+    max-height: 11rem; overflow-y: auto; padding: 0.35rem;
+    background: #f1f7fa; border: 1px solid #d7e6ee; border-radius: 0.9rem;
+}
+.trip-option {
+    display: flex; align-items: flex-start; gap: 0.65rem; padding: 0.55rem 0.7rem; border-radius: 0.65rem;
+    cursor: pointer; transition: background 0.15s ease;
+}
+.trip-option:hover { background: #e3f0f6; }
+.trip-option input[type="checkbox"] { width: 1.1rem; height: 1.1rem; margin-top: 0.15rem; accent-color: #0b8aa8; flex-shrink: 0; cursor: pointer; }
+.trip-option span { display: flex; flex-direction: column; font-size: 0.78rem; line-height: 1.25; }
+.trip-option strong { color: #0c2338; font-weight: 700; }
+.trip-option em { color: #4b6b80; font-style: normal; font-size: 0.72rem; }
+.trip-option:has(input:checked) { background: #dff4f9; box-shadow: inset 3px 0 0 #0b8aa8; }

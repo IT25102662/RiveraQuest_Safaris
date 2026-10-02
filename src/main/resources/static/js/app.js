@@ -366,6 +366,38 @@ case 'customer-profile-view':
         }
     },
 
+    // ---- Tick-box trip pickers (voucher, walk-in booking, review) ----
+    renderTripChecklist(id, trips, labelFn, emptyText) {
+        const box = document.getElementById(id);
+        if (!box) return;
+        box.innerHTML = trips.length === 0
+            ? `<p class="p-3 text-xs text-slate-400">${emptyText || 'No trips available.'}</p>`
+            : trips.map(t => `
+                <label class="trip-option">
+                    <input type="checkbox" value="${t.id}" onchange="App.onTripTick(this)">
+                    <span>${labelFn(t)}</span>
+                </label>`).join('');
+    },
+
+    onTripTick(input) {
+        const box = input.closest('.trip-checklist');
+        if (box && box.dataset.mode === 'single' && input.checked) {
+            box.querySelectorAll('input[type=checkbox]').forEach(cb => { if (cb !== input) cb.checked = false; });
+        }
+    },
+
+    tickAllTrips(id, state) {
+        document.querySelectorAll(`#${id} input[type=checkbox]`).forEach(cb => { cb.checked = state; });
+    },
+
+    setTripTicks(id, ids) {
+        document.querySelectorAll(`#${id} input[type=checkbox]`).forEach(cb => { cb.checked = ids.includes(parseInt(cb.value)); });
+    },
+
+    getTickedTripIds(id) {
+        return Array.from(document.querySelectorAll(`#${id} input[type=checkbox]:checked`)).map(cb => parseInt(cb.value));
+    },
+
     async openWalkInModal() {
         const modal = document.getElementById('walkin-booking-modal');
         const tripsSelect = document.getElementById('walkin-trip-select');
@@ -374,9 +406,9 @@ case 'customer-profile-view':
 
         const trips = (await API.getTrips()).filter(t => t.status === 'Scheduled' && t.availableSeats > 0 && this.isUpcoming(t));
 
-        tripsSelect.innerHTML = trips.length === 0
-            ? `<option value="">No departures scheduled</option>`
-            : trips.map(t => `<option value="${t.id}">🗓 ${t.tripDate} ${t.departureTime} — ${t.route.origin} → ${t.route.destination} · Vessel: ${t.boat.name} (${t.availableSeats} seats left)</option>`).join('');
+        this.renderTripChecklist('walkin-trip-select', trips,
+            t => `<strong>${t.route.origin} → ${t.route.destination}</strong><em>${t.tripDate} ${t.departureTime} · ${t.boat.name} · ${t.availableSeats} seats left</em>`,
+            'No departures scheduled');
 
         modal.classList.remove('hidden');
     },
@@ -386,7 +418,7 @@ case 'customer-profile-view':
         const email = document.getElementById('walkin-email').value.trim();
         const phone = document.getElementById('walkin-phone').value.trim();
         const nic = document.getElementById('walkin-nic').value.trim();
-        const tripId = parseInt(document.getElementById('walkin-trip-select').value);
+        const tripId = this.getTickedTripIds('walkin-trip-select')[0];
         const seatCount = parseInt(document.getElementById('walkin-seat-count').value);
 
         if (!name || !email || !phone || !tripId || !seatCount) {
@@ -599,8 +631,9 @@ case 'customer-profile-view':
         const pkgContainer = document.getElementById('mkt-packages-grid');
         if (pkgContainer) {
             pkgContainer.innerHTML = trips.map(t => `
-                <div class="glass-card p-4 rounded-2xl flex items-center justify-between border-l-4 border-teal-500">
-                    <div>
+                <div class="glass-card p-3 rounded-2xl flex items-center gap-4 overflow-hidden">
+                    <div class="w-28 shrink-0">${Scenery.html(t, 'h-20', 'compact rounded-xl overflow-hidden')}</div>
+                    <div class="flex-1 min-w-0">
                         <span class="text-[10px] font-bold px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full">${t.status}</span>
                         <h4 class="font-bold text-slate-900 text-sm mt-1">${t.route.origin} → ${t.route.destination}</h4>
                         <p class="text-xs text-slate-500">🚤 ${t.boat.name} | 📅 ${t.tripDate} ${t.departureTime} | LKR ${t.price.toLocaleString()} per tourist</p>
@@ -1259,12 +1292,12 @@ case 'customer-profile-view':
                     : 'bg-slate-200 text-slate-600';
                 const discountLabel = p.discountType === 'FIXED_AMOUNT' ? `LKR ${p.fixedAmount} OFF` : `${p.discountPercentage}% OFF`;
                 const usageLabel = p.usageLimit ? `${p.usageCount} / ${p.usageLimit}` : `${p.usageCount} (unlimited)`;
+                const theme = Array.from(String(p.code || '')).reduce((a, ch) => a + ch.charCodeAt(0), 0) % 4;
                 return `
-                <div class="glass-card p-5 rounded-2xl overflow-hidden border-l-4 ${closed ? 'border-slate-300 opacity-75' : 'border-amber-500'}">
-                    <div class="voucher-strip -mx-5 -mt-5 mb-3 ${closed ? 'grayscale' : ''}"></div>
+                <div class="glass-card voucher-card vt-${theme} p-5 rounded-2xl overflow-hidden ${closed ? 'opacity-75' : ''}">
+                    <div class="voucher-strip vs-${theme} -mx-5 -mt-5 mb-3 ${closed ? 'grayscale' : ''}"><span class="voucher-off">${discountLabel}</span></div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="font-mono font-extrabold text-amber-700 text-lg">${p.code}</span>
-                        <span class="px-2.5 py-1 bg-amber-100 text-amber-900 rounded-full text-xs font-bold">${discountLabel}</span>
+                        <span class="voucher-code font-mono font-extrabold text-lg">${p.code}</span>
                     </div>
                     <p class="text-sm font-bold text-slate-800 mb-1">${p.title || ''}</p>
                     <p class="text-xs text-slate-600 mb-3">${p.description || ''}</p>
@@ -1323,8 +1356,9 @@ case 'customer-profile-view':
         this.toggleVoucherDiscountFields();
 
         const trips = await API.getTrips();
-        const tripSelect = document.getElementById('voucher-applicable-trips');
-        tripSelect.innerHTML = trips.map(t => `<option value="${t.id}">${t.route.origin} → ${t.route.destination} (${t.tripDate})</option>`).join('');
+        this.renderTripChecklist('voucher-applicable-trips', trips,
+            t => `<strong>${t.route.origin} → ${t.route.destination}</strong><em>${t.tripDate} ${t.departureTime}</em>`,
+            'No trips available.');
 
         if (id) {
             try {
@@ -1346,9 +1380,7 @@ case 'customer-profile-view':
                 document.getElementById('voucher-modal-title').textContent = 'Edit Voucher';
 
                 const applicableIds = await API.getApplicableTrips(id);
-                Array.from(tripSelect.options).forEach(opt => {
-                    opt.selected = applicableIds.includes(parseInt(opt.value));
-                });
+                this.setTripTicks('voucher-applicable-trips', applicableIds);
             } catch (e) {
                 showToast(e.message, 'error');
                 return;
@@ -1384,7 +1416,7 @@ case 'customer-profile-view':
             return;
         }
 
-        const selectedTripIds = Array.from(document.getElementById('voucher-applicable-trips').selectedOptions).map(opt => parseInt(opt.value));
+        const selectedTripIds = this.getTickedTripIds('voucher-applicable-trips');
 
         try {
             let savedPromo;
@@ -1636,10 +1668,10 @@ case 'customer-profile-view':
                 }
             });
 
-            const select = document.getElementById('review-package-select');
-            select.innerHTML = uniqueTrips.length === 0
-                ? '<option value="">No booked trips yet</option>'
-                : uniqueTrips.map(t => `<option value="${t.id}">${t.route.origin} → ${t.route.destination} (${t.tripDate})</option>`).join('');
+            this.renderTripChecklist('review-package-select', uniqueTrips,
+                t => `<strong>${t.route.origin} → ${t.route.destination}</strong><em>${t.tripDate}</em>`,
+                'No booked trips yet');
+            if (uniqueTrips.length === 1) this.tickAllTrips('review-package-select', true);
         } catch (e) {
             showToast(e.message, 'error');
             return;
@@ -1661,7 +1693,7 @@ case 'customer-profile-view':
 
     async submitReview() {
         const user = AuthState.currentUser;
-        const tripId = document.getElementById('review-package-select').value;
+        const tripId = this.getTickedTripIds('review-package-select')[0];
         const rating = parseInt(document.getElementById('review-rating-value').value);
         const comment = document.getElementById('review-comment-input').value.trim();
 

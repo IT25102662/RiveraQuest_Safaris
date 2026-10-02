@@ -410,19 +410,19 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="glass-card p-5 rounded-2xl">
+            <div class="glass-card p-5 rounded-2xl border-t-4 border-cyan-500">
                 <span class="text-xs font-bold text-slate-400 uppercase">Scheduled Trips</span>
                 <span class="text-3xl font-extrabold text-slate-900 block mt-1" id="mkt-total-pkgs">0</span>
             </div>
-            <div class="glass-card p-5 rounded-2xl">
+            <div class="glass-card p-5 rounded-2xl border-t-4 border-amber-400">
                 <span class="text-xs font-bold text-slate-400 uppercase">Active Vouchers</span>
                 <span class="text-3xl font-extrabold text-amber-600 block mt-1" id="mkt-active-promos">0</span>
             </div>
-            <div class="glass-card p-5 rounded-2xl">
+            <div class="glass-card p-5 rounded-2xl border-t-4 border-rose-400">
                 <span class="text-xs font-bold text-slate-400 uppercase">Tourist Reviews</span>
                 <span class="text-3xl font-extrabold text-cyan-700 block mt-1" id="mkt-total-reviews">0</span>
             </div>
-            <div class="glass-card p-5 rounded-2xl">
+            <div class="glass-card p-5 rounded-2xl border-t-4 border-emerald-500">
                 <span class="text-xs font-bold text-slate-400 uppercase">Average Star Rating</span>
                 <span class="text-3xl font-extrabold text-emerald-600 block mt-1" id="mkt-avg-rating">0.0</span>
             </div>
@@ -854,7 +854,7 @@
 
     <!-- 18. PROMOTIONS VIEW -->
     <div id="promotions-view" class="view-page hidden max-w-6xl mx-auto px-4 py-10">
-        <div class="page-banner banner-coast">
+        <div class="page-banner banner-reef">
             <div>
                 <h1 class="text-3xl font-extrabold">Promotional Campaigns &amp; Vouchers</h1>
                 <p class="text-cyan-50 text-sm mt-1">Create seasonal offers and track voucher usage</p>
@@ -1129,7 +1129,7 @@
             </div>
             <div>
                 <label class="font-bold text-slate-500 block mb-1">Select Trip *</label>
-                <select id="walkin-trip-select" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0 font-bold text-cyan-700"></select>
+                <div id="walkin-trip-select" class="trip-checklist" data-mode="single"></div>
             </div>
             <div>
                 <label class="font-bold text-slate-500 block mb-1">Passenger Seat Count *</label>
@@ -1233,8 +1233,11 @@
                 <input type="number" id="voucher-usage-limit" min="0" placeholder="Leave blank for unlimited" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0">
             </div>
             <div>
-                <label class="font-bold text-slate-500 block mb-1">Applicable Trips (none selected = applies to all trips)</label>
-                <select id="voucher-applicable-trips" multiple size="4" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0"></select>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="font-bold text-slate-500">Applicable Trips <span class="font-normal text-slate-400">(none ticked = all trips)</span></label>
+                    <span class="text-[11px] font-bold"><a href="#" onclick="App.tickAllTrips('voucher-applicable-trips', true); return false;" class="text-cyan-700 hover:underline">Select all</a> · <a href="#" onclick="App.tickAllTrips('voucher-applicable-trips', false); return false;" class="text-slate-500 hover:underline">Clear</a></span>
+                </div>
+                <div id="voucher-applicable-trips" class="trip-checklist" data-mode="multi"></div>
             </div>
         </div>
 
@@ -1324,7 +1327,7 @@
         <div class="space-y-4 text-xs mb-6">
             <div>
                 <label class="font-bold text-slate-500 block mb-1">Safari Package *</label>
-                <select id="review-package-select" class="w-full px-3 py-2 bg-slate-100 rounded-xl border-0 font-bold"></select>
+                <div id="review-package-select" class="trip-checklist" data-mode="single"></div>
             </div>
             <div>
                 <label class="font-bold text-slate-500 block mb-2">Your Rating *</label>
