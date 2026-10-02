@@ -262,32 +262,49 @@ case 'customer-profile-view':
         const user = AuthState.currentUser;
         const bookings = await API.getBookings(user.id);
         const upcomingContainer = document.getElementById('customer-upcoming-bookings');
+        const pastContainer = document.getElementById('customer-past-bookings');
+
+        const confirmed = bookings.filter(b => b.status === 'CONFIRMED' && b.trip);
+        const upcoming = confirmed.filter(b => this.isUpcoming(b.trip))
+            .sort((x, y) => `${x.trip.tripDate}T${x.trip.departureTime}`.localeCompare(`${y.trip.tripDate}T${y.trip.departureTime}`));
+        const past = confirmed.filter(b => !this.isUpcoming(b.trip))
+            .sort((x, y) => `${y.trip.tripDate}T${y.trip.departureTime}`.localeCompare(`${x.trip.tripDate}T${x.trip.departureTime}`));
+
+        const countUp = document.getElementById('customer-upcoming-count');
+        const countPast = document.getElementById('customer-past-count');
+        if (countUp) countUp.textContent = upcoming.length;
+        if (countPast) countPast.textContent = past.length;
+
+        const card = (b, isPast) => `
+            <div class="glass-card p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 ${isPast ? 'border-slate-300' : 'border-cyan-500'}">
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                <div class="w-36 shrink-0">${Scenery.html(b.trip, 'h-28', 'rounded-xl overflow-hidden' + (isPast ? ' grayscale opacity-80' : ''))}</div>
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-mono font-bold ${isPast ? 'text-slate-500' : 'text-cyan-700'}">${b.bookingReference}</span>
+                        <span class="px-2 py-0.5 text-xs rounded-full ${isPast ? 'bg-slate-200 text-slate-700 font-bold' : 'badge-confirmed'}">${isPast ? 'COMPLETED' : 'CONFIRMED'}</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800">${b.trip.route.origin} → ${b.trip.route.destination}</h4>
+                    <p class="text-xs text-slate-500 mt-1">🗓 ${isPast ? 'Departed' : 'Departure'}: <strong>${b.trip.tripDate} ${b.trip.departureTime}</strong> | 🚤 Boat: ${b.trip.boat.name} | Seats: ${b.seatNumbers}</p>
+                </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="App.navigate('booking-details-view', {bookingId: ${b.id}})" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition">${isPast ? 'View Receipt' : 'Digital Boarding Pass'}</button>
+                    ${isPast
+                        ? `<button onclick="App.openReviewModal()" class="px-3 py-2 text-amber-700 hover:bg-amber-50 rounded-xl text-xs font-semibold transition">★ Write a Review</button>`
+                        : `<button onclick="App.cancelBooking(${b.id})" class="px-3 py-2 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition">Cancel</button>`}
+                </div>
+            </div>`;
 
         if (upcomingContainer) {
-            const active = bookings.filter(b => b.status === 'CONFIRMED');
-            if (active.length === 0) {
-                upcomingContainer.innerHTML = `<div class="p-6 text-center text-slate-500 glass-card rounded-2xl">No active upcoming boat safari bookings found. Explore trips to book your adventure!</div>`;
-            } else {
-                upcomingContainer.innerHTML = active.map(b => `
-                    <div class="glass-card p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-cyan-500">
-                        <div class="flex items-center gap-4 flex-1 min-w-0">
-                        <div class="w-36 shrink-0">${Scenery.html(b.trip, 'h-28', 'rounded-xl overflow-hidden')}</div>
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-mono font-bold text-cyan-700">${b.bookingReference}</span>
-                                <span class="px-2 py-0.5 text-xs rounded-full badge-confirmed">CONFIRMED</span>
-                            </div>
-                            <h4 class="text-lg font-bold text-slate-800">${b.trip.route.origin} → ${b.trip.route.destination}</h4>
-                            <p class="text-xs text-slate-500 mt-1">🗓 Departure: <strong>${b.trip.tripDate} ${b.trip.departureTime}</strong> | 🚤 Boat: ${b.trip.boat.name} | Seats: ${b.seatNumbers}</p>
-                        </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="App.navigate('booking-details-view', {bookingId: ${b.id}})" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition">Digital Boarding Pass</button>
-                            <button onclick="App.cancelBooking(${b.id})" class="px-3 py-2 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition">Cancel</button>
-                        </div>
-                    </div>
-                `).join('');
-            }
+            upcomingContainer.innerHTML = upcoming.length === 0
+                ? `<div class="p-6 text-center text-slate-500 glass-card rounded-2xl">No active upcoming boat safari bookings found. Explore trips to book your adventure!</div>`
+                : upcoming.map(b => card(b, false)).join('');
+        }
+        if (pastContainer) {
+            pastContainer.innerHTML = past.length === 0
+                ? `<div class="p-6 text-center text-slate-400 text-sm glass-card rounded-2xl">Your completed trips will appear here after you sail.</div>`
+                : past.map(b => card(b, true)).join('');
         }
     },
 

@@ -248,8 +248,11 @@
             <button onclick="App.navigate('package-listing-view')" class="px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-extrabold rounded-xl text-sm shadow-lg transition">+ Book New Safari</button>
         </div>
 
-        <h2 class="text-xl font-bold text-slate-800 mb-4">My Upcoming Safari Reservations</h2>
+        <h2 class="text-xl font-bold text-slate-800 mb-4">My Upcoming Safari Reservations <span id="customer-upcoming-count" class="ml-1 px-2.5 py-0.5 bg-cyan-100 text-cyan-800 rounded-full text-xs font-bold align-middle">0</span></h2>
         <div id="customer-upcoming-bookings" class="space-y-4 mb-10"></div>
+
+        <h2 class="text-xl font-bold text-slate-800 mb-4">Completed Safari Trips <span id="customer-past-count" class="ml-1 px-2.5 py-0.5 bg-slate-200 text-slate-700 rounded-full text-xs font-bold align-middle">0</span></h2>
+        <div id="customer-past-bookings" class="space-y-4 mb-10"></div>
     </div>
 
     <!-- 3. DESK OFFICER DASHBOARD VIEW (FULLY FUNCTIONAL CRUD & CUSTOMER VALIDATION WORKSPACE) -->
