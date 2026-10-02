@@ -1,5 +1,6 @@
 package com.boatsafari.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -20,6 +21,7 @@ public abstract class Staff {
     private String email;
 
     @Column(nullable = false, length = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // accepted on input, never sent back in responses
     private String passwordHash;
 
     @Column(nullable = false)
