@@ -285,7 +285,7 @@ case 'customer-profile-view':
                         <span class="px-2 py-0.5 text-xs rounded-full ${isPast ? 'bg-slate-200 text-slate-700 font-bold' : 'badge-confirmed'}">${isPast ? 'COMPLETED' : 'CONFIRMED'}</span>
                     </div>
                     <h4 class="text-lg font-bold text-slate-800">${b.trip.route.origin} → ${b.trip.route.destination}</h4>
-                    <p class="text-xs text-slate-500 mt-1">🗓 ${isPast ? 'Departed' : 'Departure'}: <strong>${b.trip.tripDate} ${b.trip.departureTime}</strong> | 🚤 Boat: ${b.trip.boat.name} | Seats: ${b.seatNumbers}</p>
+                    <p class="text-xs text-slate-500 mt-1">📅 ${isPast ? 'Departed' : 'Departure'}: <strong>${b.trip.tripDate} ${b.trip.departureTime}</strong> | 🚤 Boat: ${b.trip.boat.name} | Seats: ${b.seatNumbers}</p>
                 </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -950,7 +950,7 @@ case 'customer-profile-view':
                 logs.map(l => `
                     <div class="p-3 border-b border-slate-100 text-xs">
                         <div class="flex justify-between font-bold text-slate-800 mb-1">
-                            <span>🗓 ${l.maintenanceDate} | Performed by: ${l.performedBy}</span>
+                            <span>📅 ${l.maintenanceDate} | Performed by: ${l.performedBy}</span>
                             <span class="text-cyan-700">LKR ${(l.cost||0).toLocaleString()}</span>
                         </div>
                         <p class="text-slate-600">${l.description}</p>
@@ -973,7 +973,7 @@ case 'customer-profile-view':
                         <span class="text-xs font-bold px-2.5 py-1 bg-cyan-100 text-cyan-800 rounded-full">${t.route.origin} → ${t.route.destination}</span>
                         ${this.tripLabel(t) ? `<span class="ml-2 text-[11px] font-extrabold px-2.5 py-1 bg-rose-600 text-white rounded-full">⏱ ${this.tripLabel(t)}</span>` : ''}
                         <h3 class="text-lg font-bold text-slate-900 mt-2">🚤 ${t.boat.name}</h3>
-                        <p class="text-xs text-slate-600 mt-1">🗓 Departure: <strong>${t.tripDate} ${t.departureTime}</strong>${t.guide ? ' | Guide: ' + t.guide.name : ''}</p>
+                        <p class="text-xs text-slate-600 mt-1">📅 Departure: <strong>${t.tripDate} ${t.departureTime}</strong>${t.guide ? ' | Guide: ' + t.guide.name : ''}</p>
                     </div>
                     <div class="text-right flex flex-col items-end gap-2">
                         <span class="text-sm font-bold ${this.isBookable(t) ? 'text-cyan-700' : 'text-rose-600'}">${this.isBookable(t) ? t.availableSeats + ' Seats Available' : 'Booking closed'}</span>
