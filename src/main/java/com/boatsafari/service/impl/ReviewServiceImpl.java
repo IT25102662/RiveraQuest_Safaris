@@ -51,6 +51,10 @@ public class ReviewServiceImpl implements ReviewService {
       throw new BusinessRuleException("Review Restriction: You can only submit a review for trips you have booked!");
     }
     
+    if (reviewRepository.existsByUserIdAndTripId(userId, tripId)) {
+      throw new BusinessRuleException("You have already reviewed this trip. Only one review per trip is allowed.");
+    }
+
     if (rating < 1 || rating > 5) {
       throw new BusinessRuleException("Rating must be between 1 and 5 stars!");
     }

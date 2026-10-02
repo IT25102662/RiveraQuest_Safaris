@@ -42,13 +42,13 @@ public class PromotionServiceImpl implements PromotionService {
         if (promotion.getValidFrom() == null || promotion.getValidUntil() == null) {
             throw new BusinessRuleException("Start date and expiry date are required.");
         }
-        if (promotion.getValidUntil().isBefore(promotion.getValidFrom())) {
-            throw new BusinessRuleException("Expiry date cannot be before the start date.");
+        if (!promotion.getValidUntil().isAfter(promotion.getValidFrom())) {
+            throw new BusinessRuleException("Expiry date must be after the start date.");
         }
         DiscountType type = promotion.getDiscountType() == null ? DiscountType.PERCENTAGE : promotion.getDiscountType();
         if (type == DiscountType.PERCENTAGE) {
-            if (promotion.getDiscountPercentage() == null || promotion.getDiscountPercentage() <= 0 || promotion.getDiscountPercentage() > 100) {
-                throw new BusinessRuleException("Discount percentage must be between 1 and 100.");
+            if (promotion.getDiscountPercentage() == null || promotion.getDiscountPercentage() <= 0 || promotion.getDiscountPercentage() > 50) {
+                throw new BusinessRuleException("Discount percentage must be greater than 0 and at most 50.");
             }
         } else {
             if (promotion.getFixedAmount() == null || promotion.getFixedAmount() <= 0) {
