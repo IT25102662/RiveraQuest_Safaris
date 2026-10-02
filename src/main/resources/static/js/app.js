@@ -692,7 +692,7 @@ case 'customer-profile-view':
         if (tbody) {
             tbody.innerHTML = boats.map(b => `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
-                    <td class="p-3 font-bold text-slate-800 text-sm">${b.name}</td>
+                    <td class="p-3 font-bold text-slate-800 text-sm"><div class="flex items-center gap-3"><div class="w-16 shrink-0">${Scenery.html({ id: b.id, boat: b, route: {} }, 'h-10', 'compact rounded-lg overflow-hidden')}</div>${b.name}</div></td>
                     <td class="p-3 font-mono text-xs text-slate-600">${b.registrationNumber}</td>
                     <td class="p-3 text-xs text-slate-600 font-semibold">${b.capacity} Passengers</td>
                     <td class="p-3 text-xs">${b.captainName} (${b.crewCount} crew)</td>
@@ -1148,7 +1148,8 @@ case 'customer-profile-view':
                 const discountLabel = p.discountType === 'FIXED_AMOUNT' ? `LKR ${p.fixedAmount} OFF` : `${p.discountPercentage}% OFF`;
                 const usageLabel = p.usageLimit ? `${p.usageCount} / ${p.usageLimit}` : `${p.usageCount} (unlimited)`;
                 return `
-                <div class="glass-card p-5 rounded-2xl border-l-4 ${closed ? 'border-slate-300 opacity-75' : 'border-amber-500'}">
+                <div class="glass-card p-5 rounded-2xl overflow-hidden border-l-4 ${closed ? 'border-slate-300 opacity-75' : 'border-amber-500'}">
+                    <div class="voucher-strip -mx-5 -mt-5 mb-3 ${closed ? 'grayscale' : ''}"></div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-mono font-extrabold text-amber-700 text-lg">${p.code}</span>
                         <span class="px-2.5 py-1 bg-amber-100 text-amber-900 rounded-full text-xs font-bold">${discountLabel}</span>

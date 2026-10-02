@@ -226,10 +226,10 @@
 
     <!-- 3. DESK OFFICER DASHBOARD VIEW (FULLY FUNCTIONAL CRUD & CUSTOMER VALIDATION WORKSPACE) -->
     <div id="desk-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="glass-card p-6 rounded-3xl mb-8 border-l-4 border-cyan-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="page-banner banner-coast">
             <div>
-                <h1 class="text-3xl font-extrabold text-slate-900">Welcome, <span class="logged-user-name text-cyan-700">Desk Officer</span></h1>
-                <p class="text-slate-500 text-sm mt-1">Role: <strong class="logged-user-role text-slate-800">DESK OFFICER</strong> | Counter Reservations, Customer Validation & Walk-in Workspace</p>
+                <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Desk Officer</span></h1>
+                <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">DESK OFFICER</strong> | Counter Reservations, Customer Validation & Walk-in Workspace</p>
             </div>
             <button onclick="App.openWalkInModal()" class="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-xl text-sm shadow-lg shadow-cyan-600/30 transition flex items-center gap-2">
                 <span>+</span> New Walk-in Booking
@@ -298,9 +298,11 @@
 
     <!-- 4. FLEET MANAGER DASHBOARD VIEW -->
     <div id="fleet-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="glass-card p-6 rounded-3xl mb-8 border-l-4 border-teal-500">
-            <h1 class="text-3xl font-extrabold text-slate-900">Welcome, <span class="logged-user-name text-teal-700">Fleet Manager</span></h1>
-            <p class="text-slate-500 text-sm mt-1">Role: <strong class="logged-user-role text-slate-800">FLEET MANAGER</strong> | Vessel Registry & Maintenance Workspace</p>
+        <div class="page-banner banner-reef">
+            <div>
+            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Fleet Manager</span></h1>
+            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">FLEET MANAGER</strong> | Vessel Registry & Maintenance Workspace</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -338,9 +340,11 @@
 
     <!-- 5. SAFETY OFFICER DASHBOARD VIEW -->
     <div id="safety-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="glass-card p-6 rounded-3xl mb-8 border-l-4 border-emerald-500">
-            <h1 class="text-3xl font-extrabold text-slate-900">Welcome, <span class="logged-user-name text-emerald-700">Safety Officer</span></h1>
-            <p class="text-slate-500 text-sm mt-1">Role: <strong class="logged-user-role text-slate-800">SAFETY OFFICER</strong> | Maritime Pre-Departure Audit & Clearance Workspace</p>
+        <div class="page-banner banner-whale">
+            <div>
+            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Safety Officer</span></h1>
+            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">SAFETY OFFICER</strong> | Maritime Pre-Departure Audit & Clearance Workspace</p>
+            </div>
         </div>
 
         <h2 class="text-xl font-bold text-slate-800 mb-4">Upcoming Departures Awaiting Clearance Audit</h2>
@@ -363,9 +367,11 @@
 
     <!-- 6. MARKETING OFFICER DASHBOARD VIEW -->
     <div id="marketing-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="glass-card p-6 rounded-3xl mb-8 border-l-4 border-amber-500">
-            <h1 class="text-3xl font-extrabold text-slate-900">Welcome, <span class="logged-user-name text-amber-700">Marketing Officer</span></h1>
-            <p class="text-slate-500 text-sm mt-1">Role: <strong class="logged-user-role text-slate-800">MARKETING OFFICER</strong> | Package Management, Pricing & Voucher Workspace</p>
+        <div class="page-banner banner-river">
+            <div>
+            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Marketing Officer</span></h1>
+            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">MARKETING OFFICER</strong> | Package Management, Pricing & Voucher Workspace</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -393,9 +399,11 @@
 
     <!-- 7. SYSTEM ADMIN DASHBOARD VIEW -->
     <div id="admin-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="glass-card p-6 rounded-3xl mb-8 border-l-4 border-indigo-500">
-            <h1 class="text-3xl font-extrabold text-slate-900">Welcome, <span class="logged-user-name text-indigo-700">System Administrator</span></h1>
-            <p class="text-slate-500 text-sm mt-1">Role: <strong class="logged-user-role text-slate-800">ADMIN</strong> | Complete System Management & Executive Reports Workspace</p>
+        <div class="page-banner banner-coast">
+            <div>
+            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">System Administrator</span></h1>
+            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">ADMIN</strong> | Complete System Management & Executive Reports Workspace</p>
+            </div>
         </div>
 
         <!-- KPI Cards -->
@@ -452,8 +460,11 @@
 
     <!-- 10. BOAT MANAGEMENT VIEW -->
     <div id="boat-management-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-extrabold text-slate-900">Fleet & Boat Management</h1>
+        <div class="page-banner banner-reef">
+            <div>
+                <h1 class="text-3xl font-extrabold">Fleet &amp; Boat Management</h1>
+                <p class="text-cyan-50 text-sm mt-1">Vessel registry, crew, engine and safety status</p>
+            </div>
             <button onclick="App.openBoatModal()" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl text-sm shadow-lg shadow-teal-600/30 transition">
                 + Add Boat
             </button>
@@ -755,7 +766,7 @@
 
     <!-- 17. MAINTENANCE MANAGEMENT VIEW -->
     <div id="maintenance-management-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-6">Engine & Fleet Maintenance Logs</h1>
+        <div class="page-banner banner-river"><div><h1 class="text-3xl font-extrabold">Engine &amp; Fleet Maintenance Logs</h1><p class="text-cyan-50 text-sm mt-1">Service history that keeps every vessel seaworthy</p></div></div>
         <div class="glass-card rounded-2xl overflow-hidden shadow">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">
@@ -775,8 +786,11 @@
 
     <!-- 18. PROMOTIONS VIEW -->
     <div id="promotions-view" class="view-page hidden max-w-6xl mx-auto px-4 py-10">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <h1 class="text-3xl font-extrabold text-slate-900">Promotional Campaigns & Vouchers</h1>
+        <div class="page-banner banner-coast">
+            <div>
+                <h1 class="text-3xl font-extrabold">Promotional Campaigns &amp; Vouchers</h1>
+                <p class="text-cyan-50 text-sm mt-1">Create seasonal offers and track voucher usage</p>
+            </div>
             <button onclick="App.openVoucherModal()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold rounded-xl text-sm shadow-lg shadow-amber-600/30 transition">
                 + Add Voucher
             </button>
@@ -843,7 +857,7 @@
 
     <!-- 20. REPORTS VIEW -->
     <div id="reports-view" class="view-page hidden max-w-6xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-6">Business Performance & Revenue Reports</h1>
+        <div class="page-banner banner-coast"><div><h1 class="text-3xl font-extrabold">Business Performance &amp; Revenue Reports</h1><p class="text-cyan-50 text-sm mt-1">Revenue, bookings and fleet utilisation at a glance</p></div></div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <div class="glass-card p-6 rounded-2xl">
                 <span class="text-xs font-bold text-slate-400 uppercase">Gross Booking Revenue</span>
@@ -862,7 +876,7 @@
 
     <!-- 21. USER MANAGEMENT VIEW -->
     <div id="user-management-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-6">User Accounts & System Roles</h1>
+        <div class="page-banner banner-whale"><div><h1 class="text-3xl font-extrabold">User Accounts &amp; System Roles</h1><p class="text-cyan-50 text-sm mt-1">Manage who can access each RiveraQuest workspace</p></div></div>
         <div class="glass-card rounded-2xl overflow-hidden shadow">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">

@@ -226,3 +226,16 @@ button:not(:disabled):active { transform: translateY(1px); }
 .banner-reef  { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/reef-banner.jpg'), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
 .banner-coast { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/coast-banner.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
 @media (max-width: 640px) { .page-banner { flex-direction: column; align-items: flex-start; padding: 1.25rem; } }
+
+/* ---------- Stage 5: staff pages ---------- */
+.scenery.compact .scenery-tag { display: none; }
+.scenery.compact::after { display: none; }
+.voucher-strip {
+    height: 56px;
+    background-image:
+        linear-gradient(90deg, rgba(217, 146, 26, 0.80) 0%, rgba(12, 35, 56, 0.55) 100%),
+        url('../img/coast-banner.jpg'),
+        url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'),
+        linear-gradient(135deg, #d9921a, #0c2338);
+    background-size: cover; background-position: center;
+}
