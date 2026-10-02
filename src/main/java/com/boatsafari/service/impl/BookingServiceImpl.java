@@ -73,6 +73,12 @@ public class BookingServiceImpl implements BookingService {
             throw new BusinessRuleException("Cannot book a trip that is " + trip.getStatus());
         }
 
+        LocalDateTime departure = LocalDateTime.of(trip.getTripDate(), trip.getDepartureTime());
+        if (departure.isBefore(LocalDateTime.now())) {
+            throw new BusinessRuleException("This departure (" + trip.getTripDate() + " " + trip.getDepartureTime()
+                    + ") has already left. Please choose an upcoming trip.");
+        }
+
         if (dto.getSeatCount() > trip.getAvailableSeats()) {
             throw new BusinessRuleException("Overbooking Error: Requested " + dto.getSeatCount() +
                     " seat(s), but only " + trip.getAvailableSeats() + " seat(s) remain available!");

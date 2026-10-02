@@ -190,12 +190,17 @@ case 'customer-profile-view':
     },
 
     // 1. Home Page View
+    // A trip is upcoming when its departure date and time are still in the future
+    isUpcoming(t) {
+        return new Date(`${t.tripDate}T${t.departureTime}`) > new Date();
+    },
+
     async renderHomePage() {
         const trips = await API.getTrips();
         const container = document.getElementById('featured-trips-grid');
         if (!container) return;
 
-        const upcoming = trips.filter(t => t.status === 'Scheduled').slice(0, 3);
+        const upcoming = trips.filter(t => t.status === 'Scheduled' && this.isUpcoming(t)).slice(0, 3);
 
         container.innerHTML = upcoming.map(t => `
             <div class="glass-card rounded-2xl overflow-hidden shadow-lg transition hover:shadow-2xl hover:-translate-y-1">
@@ -331,7 +336,7 @@ case 'customer-profile-view':
 
         if (!modal || !tripsSelect) return;
 
-        const trips = (await API.getTrips()).filter(t => t.status === 'Scheduled' && t.availableSeats > 0);
+        const trips = (await API.getTrips()).filter(t => t.status === 'Scheduled' && t.availableSeats > 0 && this.isUpcoming(t));
 
         tripsSelect.innerHTML = trips.length === 0
             ? `<option value="">No departures scheduled</option>`
@@ -513,6 +518,7 @@ case 'customer-profile-view':
         if (addBtn) addBtn.classList.toggle('hidden', !isOfficer);
 
         let trips = await API.getTrips();
+        if (!isOfficer) trips = trips.filter(t => this.isUpcoming(t));
         if (origin) {
             trips = trips.filter(t =>
                 t.route.origin.toLowerCase().includes(origin) || t.route.destination.toLowerCase().includes(origin)
@@ -771,10 +777,11 @@ case 'customer-profile-view':
 
     // Trip Schedules Page
     async renderTripSchedules() {
-        const trips = await API.getTrips();
+        let trips = await API.getTrips();
         const container = document.getElementById('trip-schedules-list');
         const role = AuthState.currentUser ? AuthState.currentUser.role : 'CUSTOMER';
         const canBook = ['CUSTOMER', 'DESK_OFFICER', 'ADMIN'].includes(role);
+        if (role === 'CUSTOMER' || role === 'DESK_OFFICER') trips = trips.filter(t => this.isUpcoming(t));
 
         if (container) {
             container.innerHTML = trips.map(t => `
