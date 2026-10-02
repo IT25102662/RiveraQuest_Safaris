@@ -195,6 +195,35 @@ case 'customer-profile-view':
         return new Date(`${t.tripDate}T${t.departureTime}`) > new Date();
     },
 
+    // Label shown on trips that can no longer be booked (null when the trip is still open)
+    tripLabel(t) {
+        if (t.status === 'Cancelled') return 'CANCELLED';
+        if (t.status === 'Completed') return 'COMPLETED';
+        if (!this.isUpcoming(t)) return 'DEPARTED';
+        return null;
+    },
+
+    isBookable(t) {
+        return t.status === 'Scheduled' && this.isUpcoming(t);
+    },
+
+    // Open trips first (soonest departure first), then closed trips (most recent first)
+    sortTrips(trips) {
+        const key = t => new Date(`${t.tripDate}T${t.departureTime}`).getTime();
+        const open = trips.filter(t => this.isBookable(t)).sort((a, b) => key(a) - key(b));
+        const closed = trips.filter(t => !this.isBookable(t)).sort((a, b) => key(b) - key(a));
+        return [...open, ...closed];
+    },
+
+    tripClosedNotice(t) {
+        const label = this.tripLabel(t);
+        if (!label) return '';
+        const text = label === 'CANCELLED' ? 'This trip was cancelled and cannot be booked.'
+            : label === 'COMPLETED' ? 'This trip has been completed and cannot be booked.'
+            : `This trip departed on ${t.tripDate} at ${t.departureTime} and can no longer be booked.`;
+        return `<p class="text-xs font-semibold text-rose-600 mb-2">${text}</p>`;
+    },
+
     async renderHomePage() {
         const trips = await API.getTrips();
         const container = document.getElementById('featured-trips-grid');
@@ -518,19 +547,22 @@ case 'customer-profile-view':
         if (addBtn) addBtn.classList.toggle('hidden', !isOfficer);
 
         let trips = await API.getTrips();
-        if (!isOfficer) trips = trips.filter(t => this.isUpcoming(t));
         if (origin) {
             trips = trips.filter(t =>
                 t.route.origin.toLowerCase().includes(origin) || t.route.destination.toLowerCase().includes(origin)
             );
         }
+        trips = this.sortTrips(trips);
 
         const container = document.getElementById('package-listing-grid');
         if (container) {
             container.innerHTML = trips.map(t => `
-                <div class="glass-card rounded-2xl overflow-hidden shadow transition hover:shadow-xl flex flex-col justify-between">
+                <div class="glass-card rounded-2xl overflow-hidden shadow transition hover:shadow-xl flex flex-col justify-between ${this.isBookable(t) ? '' : 'opacity-80'}">
                     <div>
-                        <div class="h-32 bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-4xl">🚤</div>
+                        <div class="relative">
+                            <div class="h-32 bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-4xl ${this.isBookable(t) ? '' : 'grayscale opacity-60'}">🚤</div>
+                            ${this.tripLabel(t) ? `<span class="absolute top-3 left-3 px-3 py-1 bg-rose-600 text-white text-[11px] font-extrabold rounded-full shadow">⏱ ${this.tripLabel(t)}</span>` : ''}
+                        </div>
                         <div class="p-5">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold px-2.5 py-1 bg-teal-100 text-teal-800 rounded-full">${t.route.origin} → ${t.route.destination}</span>
@@ -538,6 +570,7 @@ case 'customer-profile-view':
                             </div>
                             <h3 class="text-lg font-bold text-slate-900 mb-1">🚤 ${t.boat.name}</h3>
                             <p class="text-slate-600 text-xs mb-3">Departs ${t.departureTime} · Arrives ${t.arrivalTime}${t.guide ? ' · Guide: ' + t.guide.name : ''}</p>
+                            ${this.tripClosedNotice(t)}
                             ${isOfficer ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${t.status === 'Scheduled' ? 'bg-emerald-100 text-emerald-800' : t.status === 'Cancelled' ? 'bg-rose-100 text-rose-800' : 'bg-slate-200 text-slate-600'}">${t.status}</span>` : ''}
                         </div>
                     </div>
@@ -551,7 +584,9 @@ case 'customer-profile-view':
                                 <button onclick="App.openTripModal(${t.id})" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">Edit</button>
                                 <button onclick="App.deleteTripConfirm(${t.id})" class="px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-xs font-bold transition">Delete</button>
                             ` : `
-                                <button onclick="App.navigate('trip-booking-view', {tripId: ${t.id}})" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-xl text-xs transition">Book This Trip</button>
+                                ${this.isBookable(t)
+                                    ? `<button onclick="App.navigate('trip-booking-view', {tripId: ${t.id}})" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-xl text-xs transition">Book This Trip</button>`
+                                    : `<span class="px-4 py-2 bg-slate-200 text-slate-500 rounded-xl text-xs font-bold cursor-not-allowed">Not available</span>`}
                             `}
                         </div>
                     </div>
@@ -777,23 +812,23 @@ case 'customer-profile-view':
 
     // Trip Schedules Page
     async renderTripSchedules() {
-        let trips = await API.getTrips();
+        const trips = this.sortTrips(await API.getTrips());
         const container = document.getElementById('trip-schedules-list');
         const role = AuthState.currentUser ? AuthState.currentUser.role : 'CUSTOMER';
         const canBook = ['CUSTOMER', 'DESK_OFFICER', 'ADMIN'].includes(role);
-        if (role === 'CUSTOMER' || role === 'DESK_OFFICER') trips = trips.filter(t => this.isUpcoming(t));
 
         if (container) {
             container.innerHTML = trips.map(t => `
-                <div class="glass-card p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-cyan-600">
+                <div class="glass-card p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 ${this.isBookable(t) ? 'border-cyan-600' : 'border-rose-400 opacity-80'}">
                     <div>
                         <span class="text-xs font-bold px-2.5 py-1 bg-cyan-100 text-cyan-800 rounded-full">${t.route.origin} → ${t.route.destination}</span>
+                        ${this.tripLabel(t) ? `<span class="ml-2 text-[11px] font-extrabold px-2.5 py-1 bg-rose-600 text-white rounded-full">⏱ ${this.tripLabel(t)}</span>` : ''}
                         <h3 class="text-lg font-bold text-slate-900 mt-2">🚤 ${t.boat.name}</h3>
                         <p class="text-xs text-slate-600 mt-1">🗓 Departure: <strong>${t.tripDate} ${t.departureTime}</strong>${t.guide ? ' | Guide: ' + t.guide.name : ''}</p>
                     </div>
                     <div class="text-right flex flex-col items-end gap-2">
-                        <span class="text-sm font-bold text-cyan-700">${t.availableSeats} Seats Available</span>
-                        ${canBook ? `<button onclick="App.navigate('trip-booking-view', {tripId: ${t.id}})" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition">Book Trip Seats →</button>` : ''}
+                        <span class="text-sm font-bold ${this.isBookable(t) ? 'text-cyan-700' : 'text-rose-600'}">${this.isBookable(t) ? t.availableSeats + ' Seats Available' : 'Booking closed'}</span>
+                        ${canBook && this.isBookable(t) ? `<button onclick="App.navigate('trip-booking-view', {tripId: ${t.id}})" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition">Book Trip Seats →</button>` : ''}
                     </div>
                 </div>
             `).join('');
