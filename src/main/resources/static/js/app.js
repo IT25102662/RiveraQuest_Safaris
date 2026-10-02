@@ -1124,13 +1124,26 @@ case 'customer-profile-view':
                 return;
             }
 
-            grid.innerHTML = promos.map(p => {
+            // A voucher is closed when it is expired, switched off, or has used up its limit
+            const isClosedVoucher = p => (p.computedStatus || p.status || 'ACTIVE') !== 'ACTIVE'
+                || (p.usageLimit > 0 && p.usageCount >= p.usageLimit);
+
+            const renderCard = (p) => {
+                const closed = isClosedVoucher(p);
                 const computed = p.computedStatus || p.status || 'ACTIVE';
-                const badgeClass = computed === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : computed === 'EXPIRED' ? 'bg-rose-100 text-rose-800' : 'bg-slate-200 text-slate-600';
+                const label = computed !== 'ACTIVE' ? computed
+                    : closed ? 'LIMIT REACHED'
+                    : new Date(p.validFrom) > new Date() ? 'STARTS ' + p.validFrom
+                    : 'ACTIVE';
+                const badgeClass = label === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800'
+                    : label.startsWith('STARTS') ? 'bg-sky-100 text-sky-800'
+                    : computed === 'EXPIRED' ? 'bg-rose-100 text-rose-800'
+                    : label === 'LIMIT REACHED' ? 'bg-amber-100 text-amber-800'
+                    : 'bg-slate-200 text-slate-600';
                 const discountLabel = p.discountType === 'FIXED_AMOUNT' ? `LKR ${p.fixedAmount} OFF` : `${p.discountPercentage}% OFF`;
                 const usageLabel = p.usageLimit ? `${p.usageCount} / ${p.usageLimit}` : `${p.usageCount} (unlimited)`;
                 return `
-                <div class="glass-card p-5 rounded-2xl border-l-4 border-amber-500">
+                <div class="glass-card p-5 rounded-2xl border-l-4 ${closed ? 'border-slate-300 opacity-75' : 'border-amber-500'}">
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-mono font-extrabold text-amber-700 text-lg">${p.code}</span>
                         <span class="px-2.5 py-1 bg-amber-100 text-amber-900 rounded-full text-xs font-bold">${discountLabel}</span>
@@ -1142,14 +1155,26 @@ case 'customer-profile-view':
                         <span>Used: ${usageLabel}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${badgeClass}">${computed}</span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${badgeClass}">${label}</span>
                         <div class="flex gap-2">
                             <button onclick="App.openVoucherModal(${p.id})" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition">Edit</button>
                             <button onclick="App.deleteVoucher(${p.id})" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-xs font-bold transition">Delete</button>
                         </div>
                     </div>
                 </div>`;
-            }).join('');
+            };
+
+            const heading = (title, note) => `
+                <div class="col-span-full mt-2">
+                    <h2 class="text-lg font-extrabold text-slate-700">${title}</h2>
+                    <p class="text-xs text-slate-500">${note}</p>
+                </div>`;
+            const open = promos.filter(p => !isClosedVoucher(p));
+            const closedList = promos.filter(isClosedVoucher);
+            let html = '';
+            if (open.length) html += heading(`Active Vouchers (${open.length})`, 'Customers can use these right now.') + open.map(renderCard).join('');
+            if (closedList.length) html += heading(`Expired & Inactive Vouchers (${closedList.length})`, 'These can no longer be used for bookings.') + closedList.map(renderCard).join('');
+            grid.innerHTML = html;
         } catch (e) {
             loading.classList.add('hidden');
             showToast(e.message, 'error');
