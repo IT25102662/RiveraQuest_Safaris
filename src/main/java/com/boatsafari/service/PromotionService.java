@@ -1,6 +1,7 @@
 package com.boatsafari.service;
 
 import com.boatsafari.model.Promotion;
+import com.boatsafari.model.Trip;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ public interface PromotionService {
     List<Promotion> searchPromotions(String keyword, String statusFilter);
     Promotion setApplicableTrips(Long promotionId, List<Long> tripIds);
     List<Long> getApplicableTripIds(Long promotionId);
+
+    /** Validates every voucher rule for this trip and total, and returns the discount amount in LKR. */
+    double calculateDiscount(Promotion promotion, Trip trip, double totalPrice);
 }

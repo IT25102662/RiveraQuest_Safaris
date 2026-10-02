@@ -14,6 +14,7 @@ import com.boatsafari.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -172,5 +173,45 @@ public class PromotionServiceImpl implements PromotionService {
     public List<Long> getApplicableTripIds(Long promotionId) {
         Promotion promotion = getPromotionById(promotionId);
         return promotion.getApplicableTrips().stream().map(Trip::getId).collect(Collectors.toList());
+    }
+
+    @Override
+    public double calculateDiscount(Promotion promo, Trip trip, double totalPrice) {
+        String code = promo.getCode();
+        LocalDate today = LocalDate.now();
+
+        if (promo.getStatus() == VoucherStatus.INACTIVE || !Boolean.TRUE.equals(promo.getActive())) {
+            throw new BusinessRuleException("Voucher code '" + code + "' is no longer active!");
+        }
+        if (promo.getValidFrom() != null && today.isBefore(promo.getValidFrom())) {
+            throw new BusinessRuleException("Voucher code '" + code + "' is not valid until " + promo.getValidFrom() + ".");
+        }
+        if (promo.getValidUntil() != null && today.isAfter(promo.getValidUntil())) {
+            throw new BusinessRuleException("Voucher code '" + code + "' expired on " + promo.getValidUntil() + ".");
+        }
+        int used = promo.getUsageCount() == null ? 0 : promo.getUsageCount();
+        if (promo.getUsageLimit() != null && promo.getUsageLimit() > 0 && used >= promo.getUsageLimit()) {
+            throw new BusinessRuleException("Voucher code '" + code + "' has reached its usage limit.");
+        }
+        if (!promo.getApplicableTrips().isEmpty()
+                && promo.getApplicableTrips().stream().noneMatch(t -> t.getId().equals(trip.getId()))) {
+            throw new BusinessRuleException("Voucher code '" + code + "' is not valid for this trip.");
+        }
+        if (promo.getMinBookingAmount() != null && totalPrice < promo.getMinBookingAmount()) {
+            throw new BusinessRuleException("Voucher code '" + code + "' requires a minimum booking of LKR "
+                    + String.format("%,.0f", promo.getMinBookingAmount()) + ".");
+        }
+
+        double discount;
+        if (promo.getDiscountType() == DiscountType.FIXED_AMOUNT) {
+            discount = promo.getFixedAmount() == null ? 0.0 : promo.getFixedAmount();
+        } else {
+            double pct = promo.getDiscountPercentage() == null ? 0.0 : promo.getDiscountPercentage();
+            discount = totalPrice * pct / 100.0;
+            if (promo.getMaxDiscount() != null && promo.getMaxDiscount() > 0) {
+                discount = Math.min(discount, promo.getMaxDiscount());
+            }
+        }
+        return Math.min(discount, totalPrice);
     }
 }

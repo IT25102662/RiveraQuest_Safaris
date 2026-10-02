@@ -14,6 +14,7 @@ import com.boatsafari.repository.CustomerRepository;
 import com.boatsafari.repository.PromotionRepository;
 import com.boatsafari.repository.TripRepository;
 import com.boatsafari.service.BookingService;
+import com.boatsafari.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     private BookingOfficerRepository bookingOfficerRepository;
+
+    @Autowired
+    private PromotionService promotionService;
 
     @Override
     public synchronized Booking createBooking(BookingRequestDTO dto) {
@@ -82,11 +86,7 @@ public class BookingServiceImpl implements BookingService {
             appliedPromo = promotionRepository.findByCodeIgnoreCase(dto.getPromoCode().trim())
                     .orElseThrow(() -> new BusinessRuleException("Invalid voucher / discount code: " + dto.getPromoCode()));
 
-            if (!Boolean.TRUE.equals(appliedPromo.getActive())) {
-                throw new BusinessRuleException("Voucher code '" + dto.getPromoCode() + "' is no longer active!");
-            }
-
-            discountAmount = (totalPrice * appliedPromo.getDiscountPercentage()) / 100.0;
+            discountAmount = promotionService.calculateDiscount(appliedPromo, trip, totalPrice);
             appliedPromo.setUsageCount(appliedPromo.getUsageCount() + 1);
             promotionRepository.save(appliedPromo);
         }

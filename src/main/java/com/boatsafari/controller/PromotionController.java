@@ -1,13 +1,18 @@
 package com.boatsafari.controller;
 
 import com.boatsafari.model.Promotion;
+import com.boatsafari.model.Trip;
+import com.boatsafari.repository.TripRepository;
+import com.boatsafari.exception.ResourceNotFoundException;
 import com.boatsafari.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/promotions")
@@ -16,6 +21,24 @@ public class PromotionController {
 
     @Autowired
     private PromotionService promotionService;
+
+    @Autowired
+    private TripRepository tripRepository;
+
+    @GetMapping("/validate")
+    public ResponseEntity<Map<String, Object>> validateVoucher(
+            @RequestParam String code, @RequestParam Long tripId, @RequestParam int seatCount) {
+        Promotion promo = promotionService.getPromotionByCode(code.trim());
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new ResourceNotFoundException("Trip not found with ID: " + tripId));
+        double total = trip.getPrice() * seatCount;
+        double discount = promotionService.calculateDiscount(promo, trip, total);
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("code", promo.getCode());
+        result.put("discountAmount", discount);
+        result.put("finalPrice", total - discount);
+        return ResponseEntity.ok(result);
+    }
 
     @PostMapping
     public ResponseEntity<Promotion> createPromotion(@RequestParam(required = false) Long marketingOfficerId, @RequestBody Promotion promotion) {
