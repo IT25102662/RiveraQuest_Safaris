@@ -30,109 +30,113 @@
 <!-- MAIN NAVIGATION HEADER -->
 <header class="sticky top-0 z-40 glass-nav shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+        <div class="flex items-center justify-between h-20">
             <!-- Brand Logo -->
-            <a href="#" onclick="App.navigate('home-view')" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-300 to-amber-500 flex items-center justify-center text-slate-900 text-xl shadow-lg shadow-amber-500/30 group-hover:scale-105 transition">
+            <a href="#" onclick="App.navigate('home-view')" class="brand-link flex items-center gap-3 sm:gap-4 group" aria-label="RiveraQuest Safaris home">
+                <div class="brand-badge w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-amber-300 to-amber-500 flex items-center justify-center text-slate-900 text-2xl sm:text-3xl group-hover:scale-105 transition">
                     🚤
                 </div>
-                <div>
-                    <span class="text-xl font-extrabold tracking-tight text-white block">RiveraQuest<span class="text-amber-300"> Safaris</span></span>
-                    <span class="text-[10px] text-cyan-200 tracking-wider font-semibold block uppercase">Rivers · Mangroves · Open Sea</span>
+                <div class="leading-none">
+                    <span class="brand-name block"><span class="brand-name-main">RiveraQuest</span> <span class="brand-name-gold">Safaris</span></span>
+                    <span class="brand-tagline hidden sm:flex items-center gap-2"><span class="brand-line"></span>Rivers · Mangroves · Open Sea</span>
                 </div>
             </a>
 
             <!-- Logged User Badge & Logout -->
-            <div class="flex items-center gap-3">
-                <div class="hidden sm:block text-right">
-                    <span class="text-xs font-bold text-white block logged-user-name">Guest Tourist</span>
-                    <span class="text-[10px] text-cyan-300 font-semibold uppercase tracking-wider block logged-user-role">CUSTOMER</span>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="user-chip member-only">
+                    <span class="user-avatar logged-user-initial" aria-hidden="true">G</span>
+                    <span class="hidden sm:block leading-tight text-left">
+                        <span class="user-chip-name block logged-user-name">Guest Tourist</span>
+                        <span class="user-chip-role block logged-user-role">CUSTOMER</span>
+                    </span>
                 </div>
-                <button onclick="App.navigate('login-view')" class="px-3.5 py-1.5 bg-slate-800 text-slate-200 hover:bg-slate-700 font-semibold rounded-xl text-xs transition">Sign In</button>
-                <button onclick="AuthState.logout()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-xs shadow transition">Logout</button>
+                <button onclick="App.navigate('login-view')" class="signin-btn guest-only hidden" title="Sign in"><span aria-hidden="true">🔑</span><span>Sign In</span></button>
+                <button onclick="AuthState.logout()" class="logout-btn member-only" title="Log out">
+                    <span aria-hidden="true">⏻</span><span class="hidden sm:inline">Logout</span>
+                </button>
             </div>
         </div>
     </div>
 </header>
 
-<!-- DEDICATED STAKEHOLDER WORKSPACE SIDEBAR NAVIGATION BARS -->
-
-<!-- 1. TOURIST WORKSPACE SIDEBAR (WITH RIGHT-ALIGNED CUSTOMER OPTIONS & ACTIVE LINK HIGHLIGHTING) -->
-<div data-workspace-role="CUSTOMER" class="stakeholder-workspace bg-slate-900 text-slate-300 border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between py-2.5 text-xs font-semibold">
-        <!-- Left Options -->
-        <div class="flex items-center gap-2">
-            <span class="text-cyan-400 font-bold uppercase tracking-widest text-[10px] mr-2">🏖 Tourist Portal:</span>
-            <a href="#" onclick="App.navigate('home-view')" data-view="home-view" class="px-3 py-1.5 rounded-lg transition">Home</a>
-            <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" class="px-3 py-1.5 rounded-lg transition">Browse Safari Trips</a>
-            <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" class="px-3 py-1.5 rounded-lg transition">Departure Schedules</a>
+<!-- ROLE NAVIGATION BARS (one per role; icons + short labels, full names in tooltips) -->
+<nav data-workspace-role="GUEST" class="stakeholder-workspace" aria-label="Visitor menu">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
+        <div class="nav-tabs">
+            <a href="#" onclick="App.navigate('home-view')" data-view="home-view" title="Home" class="nav-tab"><span class="nav-ico" aria-hidden="true">🏠</span><span>Home</span></a>
+            <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" title="Browse Safari Trips" class="nav-tab"><span class="nav-ico" aria-hidden="true">🚤</span><span>Trips</span></a>
+            <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" title="Departure Schedules" class="nav-tab"><span class="nav-ico" aria-hidden="true">📅</span><span>Schedules</span></a>
         </div>
-
-        <!-- Right-Aligned Customer Options -->
-<div class="flex items-center gap-2">
-    <a href="#" onclick="App.navigate('tourist-dashboard-view')" data-view="tourist-dashboard-view" class="px-3 py-1.5 rounded-lg transition">My Bookings</a>
-    <a href="#" onclick="App.navigate('booking-history-view')" data-view="booking-history-view" class="px-3 py-1.5 rounded-lg transition">Booking History</a>
-    <a href="#" onclick="App.navigate('reviews-view')" data-view="reviews-view" class="px-3 py-1.5 rounded-lg transition">Reviews & Ratings</a>
-    <a href="#" onclick="App.navigate('customer-profile-view')" data-view="customer-profile-view" class="px-3 py-1.5 rounded-lg transition">My Profile</a>
-</div>
     </div>
-</div>
+</nav>
 
-<!-- 2. DESK OFFICER WORKSPACE SIDEBAR -->
-<div data-workspace-role="DESK_OFFICER" class="stakeholder-workspace bg-slate-900 text-slate-300 border-b border-slate-800 hidden">
-    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between py-2.5 text-xs font-semibold">
-        <div class="flex items-center gap-2">
-            <span class="text-cyan-400 font-bold uppercase tracking-widest text-[10px] mr-2">📋 Desk Operations:</span>
-            <a href="#" onclick="App.navigate('desk-dashboard-view')" data-view="desk-dashboard-view" class="px-3 py-1.5 rounded-lg transition">Desk Dashboard</a>
-            <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" class="px-3 py-1.5 rounded-lg transition">Seat Availability</a>
-            <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" class="px-3 py-1.5 rounded-lg transition">Safari Catalog</a>
+<nav data-workspace-role="CUSTOMER" class="stakeholder-workspace" aria-label="Tourist menu">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
+        <div class="nav-tabs">
+            <a href="#" onclick="App.navigate('home-view')" data-view="home-view" title="Home" class="nav-tab"><span class="nav-ico" aria-hidden="true">🏠</span><span>Home</span></a>
+            <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" title="Browse Safari Trips" class="nav-tab"><span class="nav-ico" aria-hidden="true">🚤</span><span>Trips</span></a>
+            <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" title="Departure Schedules" class="nav-tab"><span class="nav-ico" aria-hidden="true">📅</span><span>Schedules</span></a>
+            <a href="#" onclick="App.navigate('tourist-dashboard-view')" data-view="tourist-dashboard-view" title="My Bookings" class="nav-tab"><span class="nav-ico" aria-hidden="true">🎫</span><span>My Bookings</span></a>
+            <a href="#" onclick="App.navigate('booking-history-view')" data-view="booking-history-view" title="Booking History" class="nav-tab"><span class="nav-ico" aria-hidden="true">🕘</span><span>History</span></a>
+            <a href="#" onclick="App.navigate('reviews-view')" data-view="reviews-view" title="Reviews & Ratings" class="nav-tab"><span class="nav-ico" aria-hidden="true">⭐</span><span>Reviews</span></a>
+            <a href="#" onclick="App.navigate('customer-profile-view')" data-view="customer-profile-view" title="My Profile" class="nav-tab"><span class="nav-ico" aria-hidden="true">👤</span><span>Profile</span></a>
         </div>
-        <button onclick="App.openWalkInModal()" class="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold transition">+ New Walk-in Booking</button>
     </div>
-</div>
+</nav>
 
-<!-- 3. FLEET MANAGER WORKSPACE SIDEBAR -->
-<div data-workspace-role="FLEET_MANAGER" class="stakeholder-workspace bg-slate-900 text-slate-300 border-b border-slate-800 hidden">
-    <div class="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto py-2.5 text-xs font-semibold">
-        <span class="text-teal-400 font-bold uppercase tracking-widest text-[10px] mr-2">🚤 Fleet Management:</span>
-        <a href="#" onclick="App.navigate('fleet-dashboard-view')" data-view="fleet-dashboard-view" class="px-3 py-1.5 rounded-lg transition">Dashboard</a>
-        <a href="#" onclick="App.navigate('boat-management-view')" data-view="boat-management-view" class="px-3 py-1.5 rounded-lg transition">Vessel Fleet List</a>
-        <a href="#" onclick="App.navigate('maintenance-management-view')" data-view="maintenance-management-view" class="px-3 py-1.5 rounded-lg transition">Maintenance Logs</a>
-        <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" class="px-3 py-1.5 rounded-lg transition">Vessel Assignments</a>
+<nav data-workspace-role="DESK_OFFICER" class="stakeholder-workspace hidden" aria-label="Desk Officer menu">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
+        <div class="nav-tabs">
+            <a href="#" onclick="App.navigate('desk-dashboard-view')" data-view="desk-dashboard-view" title="Desk Dashboard" class="nav-tab"><span class="nav-ico" aria-hidden="true">📋</span><span>Dashboard</span></a>
+            <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" title="Seat Availability" class="nav-tab"><span class="nav-ico" aria-hidden="true">💺</span><span>Seats</span></a>
+            <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" title="Safari Catalog" class="nav-tab"><span class="nav-ico" aria-hidden="true">🧭</span><span>Catalog</span></a>
+        </div>
     </div>
-</div>
+</nav>
 
-<!-- 4. SAFETY OFFICER WORKSPACE SIDEBAR -->
-<div data-workspace-role="SAFETY_OFFICER" class="stakeholder-workspace bg-slate-900 text-slate-300 border-b border-slate-800 hidden">
-    <div class="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto py-2.5 text-xs font-semibold">
-        <span class="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mr-2">🦺 Safety Operations:</span>
-        <a href="#" onclick="App.navigate('safety-dashboard-view')" data-view="safety-dashboard-view" class="px-3 py-1.5 rounded-lg transition">Dashboard</a>
-        <a href="#" onclick="App.navigate('safety-records-view')" data-view="safety-records-view" class="px-3 py-1.5 rounded-lg transition">Inspection Records</a>
+<nav data-workspace-role="FLEET_MANAGER" class="stakeholder-workspace hidden" aria-label="Fleet Manager menu">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
+        <div class="nav-tabs">
+            <a href="#" onclick="App.navigate('fleet-dashboard-view')" data-view="fleet-dashboard-view" title="Fleet Dashboard" class="nav-tab"><span class="nav-ico" aria-hidden="true">📊</span><span>Dashboard</span></a>
+            <a href="#" onclick="App.navigate('boat-management-view')" data-view="boat-management-view" title="Vessel Fleet List" class="nav-tab"><span class="nav-ico" aria-hidden="true">🚤</span><span>Fleet</span></a>
+            <a href="#" onclick="App.navigate('maintenance-management-view')" data-view="maintenance-management-view" title="Maintenance Logs" class="nav-tab"><span class="nav-ico" aria-hidden="true">🔧</span><span>Maintenance</span></a>
+            <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" title="Vessel Assignments" class="nav-tab"><span class="nav-ico" aria-hidden="true">🧭</span><span>Assignments</span></a>
+        </div>
     </div>
-</div>
+</nav>
 
-<!-- 5. MARKETING OFFICER WORKSPACE SIDEBAR -->
-<div data-workspace-role="MARKETING_OFFICER" class="stakeholder-workspace bg-slate-900 text-slate-300 border-b border-slate-800 hidden">
-    <div class="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto py-2.5 text-xs font-semibold">
-        <span class="text-amber-400 font-bold uppercase tracking-widest text-[10px] mr-2">🏷 Marketing Desk:</span>
-        <a href="#" onclick="App.navigate('marketing-dashboard-view')" data-view="marketing-dashboard-view" class="px-3 py-1.5 rounded-lg transition">Dashboard</a>
-        <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" class="px-3 py-1.5 rounded-lg transition">Safari Package Catalog</a>
-        <a href="#" onclick="App.navigate('promotions-view')" data-view="promotions-view" class="px-3 py-1.5 rounded-lg transition">Promotions & Vouchers</a>
-        <a href="#" onclick="App.navigate('reviews-view')" data-view="reviews-view" class="px-3 py-1.5 rounded-lg transition">Customer Feedback</a>
+<nav data-workspace-role="SAFETY_OFFICER" class="stakeholder-workspace hidden" aria-label="Safety Officer menu">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
+        <div class="nav-tabs">
+            <a href="#" onclick="App.navigate('safety-dashboard-view')" data-view="safety-dashboard-view" title="Safety Dashboard" class="nav-tab"><span class="nav-ico" aria-hidden="true">📊</span><span>Dashboard</span></a>
+            <a href="#" onclick="App.navigate('safety-records-view')" data-view="safety-records-view" title="Inspection Records" class="nav-tab"><span class="nav-ico" aria-hidden="true">📝</span><span>Records</span></a>
+        </div>
     </div>
-</div>
+</nav>
 
-<!-- 6. SYSTEM ADMIN WORKSPACE SIDEBAR -->
-<div data-workspace-role="ADMIN" class="stakeholder-workspace bg-slate-900 text-slate-300 border-b border-slate-800 hidden">
-    <div class="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto py-2.5 text-xs font-semibold">
-        <span class="text-indigo-400 font-bold uppercase tracking-widest text-[10px] mr-2">⚙️ Administration:</span>
-        <a href="#" onclick="App.navigate('admin-dashboard-view')" data-view="admin-dashboard-view" class="px-3 py-1.5 rounded-lg transition">Dashboard</a>
-        <a href="#" onclick="App.navigate('user-management-view')" data-view="user-management-view" class="px-3 py-1.5 rounded-lg transition">User & Roles</a>
-        <a href="#" onclick="App.navigate('boat-management-view')" data-view="boat-management-view" class="px-3 py-1.5 rounded-lg transition">Fleet Records</a>
-        <a href="#" onclick="App.navigate('booking-history-view')" data-view="booking-history-view" class="px-3 py-1.5 rounded-lg transition">All Bookings</a>
-        <a href="#" onclick="App.navigate('reports-view')" data-view="reports-view" class="px-3 py-1.5 rounded-lg transition">Revenue & Reports</a>
+<nav data-workspace-role="MARKETING_OFFICER" class="stakeholder-workspace hidden" aria-label="Marketing Officer menu">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
+        <div class="nav-tabs">
+            <a href="#" onclick="App.navigate('marketing-dashboard-view')" data-view="marketing-dashboard-view" title="Marketing Dashboard" class="nav-tab"><span class="nav-ico" aria-hidden="true">📊</span><span>Dashboard</span></a>
+            <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" title="Safari Packages" class="nav-tab"><span class="nav-ico" aria-hidden="true">🧭</span><span>Packages</span></a>
+            <a href="#" onclick="App.navigate('promotions-view')" data-view="promotions-view" title="Promotions & Vouchers" class="nav-tab"><span class="nav-ico" aria-hidden="true">🏷</span><span>Vouchers</span></a>
+            <a href="#" onclick="App.navigate('reviews-view')" data-view="reviews-view" title="Customer Feedback" class="nav-tab"><span class="nav-ico" aria-hidden="true">💬</span><span>Feedback</span></a>
+        </div>
     </div>
-</div>
+</nav>
+
+<nav data-workspace-role="ADMIN" class="stakeholder-workspace hidden" aria-label="Administrator menu">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
+        <div class="nav-tabs">
+            <a href="#" onclick="App.navigate('admin-dashboard-view')" data-view="admin-dashboard-view" title="Admin Dashboard" class="nav-tab"><span class="nav-ico" aria-hidden="true">📊</span><span>Dashboard</span></a>
+            <a href="#" onclick="App.navigate('user-management-view')" data-view="user-management-view" title="User & Roles" class="nav-tab"><span class="nav-ico" aria-hidden="true">👥</span><span>Users</span></a>
+            <a href="#" onclick="App.navigate('boat-management-view')" data-view="boat-management-view" title="Fleet Records" class="nav-tab"><span class="nav-ico" aria-hidden="true">🚤</span><span>Fleet</span></a>
+            <a href="#" onclick="App.navigate('booking-history-view')" data-view="booking-history-view" title="All Bookings" class="nav-tab"><span class="nav-ico" aria-hidden="true">🎫</span><span>Bookings</span></a>
+            <a href="#" onclick="App.navigate('reports-view')" data-view="reports-view" title="Revenue & Reports" class="nav-tab"><span class="nav-ico" aria-hidden="true">📈</span><span>Reports</span></a>
+        </div>
+    </div>
+</nav>
 
 <!-- MAIN BODY CONTENT -->
 <main class="flex-grow">

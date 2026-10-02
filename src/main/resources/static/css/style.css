@@ -257,8 +257,6 @@ button:not(:disabled):active { transform: translateY(1px); }
 .scenery-reef  { background-position: center 50%; }
 .scenery-coast { background-position: center 58%; }
 .scenery.compact { background-position: center; }
-.stakeholder-workspace a[data-view] { white-space: nowrap; font-size: 0.82rem; padding-left: 0.6rem; padding-right: 0.6rem; }
-@media (min-width: 1536px) { .stakeholder-workspace a[data-view] { font-size: 0.875rem; padding-left: 0.75rem; padding-right: 0.75rem; } }
 
 /* ---------- Stage 7: form modals (Add Boat, Add Voucher, Package, Review, Walk-in, Cancel) ---------- */
 [id$="-modal"]:not(#feature-modal):not(#access-denied-modal) > .bg-white {
@@ -342,3 +340,93 @@ button:not(:disabled):active { transform: translateY(1px); }
 .trip-option strong { color: #0c2338; font-weight: 700; }
 .trip-option em { color: #4b6b80; font-style: normal; font-size: 0.72rem; }
 .trip-option:has(input:checked) { background: #dff4f9; box-shadow: inset 3px 0 0 #0b8aa8; }
+
+/* ---------- Stage 10: stronger brand name ---------- */
+.brand-link { text-decoration: none; }
+.brand-badge {
+    box-shadow: 0 0 0 3px rgba(247, 201, 90, 0.35), 0 8px 22px rgba(217, 146, 26, 0.45);
+    animation: badgeGlow 3.6s ease-in-out infinite;
+}
+@keyframes badgeGlow {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(247, 201, 90, 0.30), 0 8px 22px rgba(217, 146, 26, 0.40); }
+    50%      { box-shadow: 0 0 0 6px rgba(247, 201, 90, 0.18), 0 10px 28px rgba(217, 146, 26, 0.60); }
+}
+.brand-name {
+    font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 1.45rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.05;
+    text-shadow: 0 2px 10px rgba(6, 24, 39, 0.55);
+    white-space: nowrap;
+}
+@media (min-width: 640px) { .brand-name { font-size: 2.1rem; } }
+.brand-name-main { color: #ffffff; }
+.brand-name-gold {
+    background: linear-gradient(100deg, #fdefc8 0%, #f7c95a 35%, #efb02e 60%, #fdefc8 100%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    animation: goldShimmer 6s linear infinite;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 6px rgba(6, 24, 39, 0.45));
+}
+@keyframes goldShimmer { 0% { background-position: 0% 50%; } 100% { background-position: 220% 50%; } }
+.brand-tagline {
+    margin-top: 0.45rem; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #8fe3f0;
+}
+.brand-line { display: inline-block; width: 28px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #f7c95a, rgba(247, 201, 90, 0)); }
+.brand-link:hover .brand-line { width: 44px; transition: width 0.25s ease; }
+@media (prefers-reduced-motion: reduce) {
+    .brand-badge, .brand-name-gold { animation: none !important; }
+}
+
+/* ---------- Stage 11: simple one-line role menu + user chip ---------- */
+.stakeholder-workspace { padding: 0.45rem 0; }
+.stakeholder-workspace.hidden { display: none; }
+.nav-tabs {
+    display: flex; align-items: center; gap: 0.25rem; min-width: 0;
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab {
+    display: inline-flex; align-items: center; gap: 0.45rem; flex-shrink: 0; scroll-snap-align: start;
+    padding: 0.5rem 0.95rem !important; border-radius: 9999px !important;
+    font-size: 0.86rem !important; font-weight: 700; letter-spacing: 0.01em;
+    color: #cfe1ec; white-space: nowrap; text-decoration: none;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.nav-tab:hover { transform: translateY(-1px); }
+.nav-ico { font-size: 1rem; line-height: 1; }
+@media (max-width: 640px) {
+    .nav-tab { padding: 0.45rem 0.75rem !important; font-size: 0.8rem !important; gap: 0.35rem; }
+}
+.nav-cta {
+    padding: 0.5rem 1.05rem; border-radius: 9999px; font-size: 0.82rem; font-weight: 800;
+    color: #0c2338; background: linear-gradient(135deg, #f7c95a, #d9921a);
+    box-shadow: 0 4px 14px rgba(217, 146, 26, 0.4); transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(217, 146, 26, 0.55); }
+
+.user-chip {
+    display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0.85rem 0.3rem 0.3rem;
+    border-radius: 9999px; background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.16);
+}
+@media (max-width: 639px) { .user-chip { padding: 0.3rem; } }
+.user-avatar {
+    width: 2.2rem; height: 2.2rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1rem; color: #0c2338; background: linear-gradient(135deg, #f7c95a, #d9921a);
+}
+.user-chip-name { font-size: 0.8rem; font-weight: 800; color: #ffffff; max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-chip-role { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #8fe3f0; }
+.logout-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; border-radius: 9999px;
+    font-size: 0.8rem; font-weight: 800; color: #ffffff; background: rgba(224, 40, 80, 0.92);
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+.logout-btn:hover { background: #e11d48; transform: translateY(-1px); }
+@media (max-width: 639px) { .logout-btn { padding: 0.55rem 0.7rem; } }
+
+/* Stage 12: guest header */
+.signin-btn { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem 1rem; border-radius:9999px; font-weight:800; font-size:.85rem; color:#0f2a3d; background:linear-gradient(135deg,#fcd34d,#f59e0b); box-shadow:0 4px 12px rgba(245,158,11,.35); transition:transform .15s, box-shadow .15s; }
+.signin-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(245,158,11,.5); }
+.signin-btn.hidden, .member-only.hidden, .guest-only.hidden { display:none !important; }

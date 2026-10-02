@@ -66,6 +66,12 @@ const App = {
         const userRole = AuthState.currentUser ? AuthState.currentUser.role : 'CUSTOMER';
         const allowedRoles = VIEW_PERMISSIONS[viewId] || ['ALL'];
 
+        // Visitors who have not signed in may only open public pages and the sign-in page
+        if (!AuthState.signedIn && viewId !== 'login-view' && !allowedRoles.includes('ALL')) {
+            showToast('Please sign in to continue', 'error');
+            return this.navigate('login-view');
+        }
+
         // Strict Role Guard - Check if current role is authorized
         if (!allowedRoles.includes('ALL') && !allowedRoles.includes(userRole)) {
             this.showAccessDeniedModal(viewId, userRole);

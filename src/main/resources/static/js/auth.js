@@ -19,21 +19,24 @@ const DEFAULT_USERS = {
 
 const AuthState = {
     currentUser: null,
+    signedIn: false,
 
     init() {
+        // A visitor is a neutral guest until they sign in; no account is pre-selected.
         const stored = localStorage.getItem('safari_session');
-        if (stored) {
-            try { this.currentUser = JSON.parse(stored); } catch (e) { this.currentUser = DEFAULT_USERS.CUSTOMER; }
-        } else {
-            this.currentUser = DEFAULT_USERS.CUSTOMER;
-            localStorage.setItem('safari_session', JSON.stringify(this.currentUser));
+        this.signedIn = localStorage.getItem('safari_signed_in') === '1' && !!stored;
+        this.currentUser = DEFAULT_USERS.CUSTOMER; // internal fallback so public pages keep working
+        if (this.signedIn) {
+            try { this.currentUser = JSON.parse(stored); } catch (e) { this.signedIn = false; }
         }
         this.updateWorkspaceInfo();
     },
 
     setUserSession(user) {
         this.currentUser = user;
+        this.signedIn = true;
         localStorage.setItem('safari_session', JSON.stringify(user));
+        localStorage.setItem('safari_signed_in', '1');
         this.updateWorkspaceInfo();
     },
 
@@ -64,7 +67,11 @@ const AuthState = {
     },
 
     logout() {
-        this.setUserSession(DEFAULT_USERS.CUSTOMER);
+        this.currentUser = DEFAULT_USERS.CUSTOMER;
+        this.signedIn = false;
+        localStorage.removeItem('safari_session');
+        localStorage.removeItem('safari_signed_in');
+        this.updateWorkspaceInfo();
         showToast("Logged out successfully");
         if (window.App) {
             window.App.navigate('login-view');
@@ -76,12 +83,16 @@ const AuthState = {
     },
 
     updateWorkspaceInfo() {
-        const role = this.currentUser ? this.currentUser.role : 'CUSTOMER';
+        const role = this.signedIn && this.currentUser ? this.currentUser.role : 'GUEST';
         const fullName = this.currentUser ? this.currentUser.fullName : 'Guest';
 
         // Update workspace headers & sidebars dynamically
         document.querySelectorAll('.logged-user-name').forEach(el => el.textContent = fullName);
         document.querySelectorAll('.logged-user-role').forEach(el => el.textContent = role.replace('_', ' '));
+        document.querySelectorAll('.logged-user-initial').forEach(el => el.textContent = (fullName.trim().charAt(0) || 'G').toUpperCase());
+
+        document.querySelectorAll('.member-only').forEach(el => el.classList.toggle('hidden', role === 'GUEST'));
+        document.querySelectorAll('.guest-only').forEach(el => el.classList.toggle('hidden', role !== 'GUEST'));
 
         // Toggle Workspace Visibility - Each stakeholder has their own dedicated workspace container!
         document.querySelectorAll('.stakeholder-workspace').forEach(ws => {
