@@ -59,6 +59,12 @@ public class UserServiceImpl implements UserService {
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
 
+        // Block suspended accounts (status is managed from the Admin "User & Roles" page)
+        Optional<User> accountOpt = userRepository.findByEmail(email);
+        if (accountOpt.isPresent() && "SUSPENDED".equalsIgnoreCase(accountOpt.get().getStatus())) {
+            throw new BusinessRuleException("Your account has been suspended. Please contact the administrator.");
+        }
+
         Optional<Customer> customerOpt = customerRepository.findByEmail(email);
         if (customerOpt.isPresent()) {
             Customer c = customerOpt.get();
