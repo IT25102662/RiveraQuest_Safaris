@@ -212,12 +212,12 @@
 
     <!-- 2. TOURIST DASHBOARD VIEW -->
     <div id="tourist-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="glass-card p-6 rounded-3xl mb-8 border-l-4 border-cyan-500 flex justify-between items-center">
+        <div class="page-banner banner-whale">
             <div>
-                <h1 class="text-3xl font-extrabold text-slate-900">Welcome, <span class="logged-user-name text-cyan-700">Tourist</span></h1>
-                <p class="text-slate-500 text-sm mt-1">Role: <strong class="logged-user-role text-slate-800">CUSTOMER</strong> | RiveraQuest Customer Booking Portal</p>
+                <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Tourist</span></h1>
+                <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">CUSTOMER</strong> | RiveraQuest Customer Booking Portal</p>
             </div>
-            <button onclick="App.navigate('package-listing-view')" class="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl text-sm shadow transition">+ Book New Safari</button>
+            <button onclick="App.navigate('package-listing-view')" class="px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-extrabold rounded-xl text-sm shadow-lg transition">+ Book New Safari</button>
         </div>
 
         <h2 class="text-xl font-bold text-slate-800 mb-4">My Upcoming Safari Reservations</h2>
@@ -438,10 +438,10 @@
 
     <!-- 8. TRIP LISTING VIEW -->
     <div id="package-listing-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <div class="flex items-center justify-between mb-8">
+        <div class="page-banner banner-coast">
             <div>
-                <h1 class="text-3xl font-extrabold text-slate-900">Explore Scheduled Trips</h1>
-                <p class="text-slate-500 text-sm">Choose from accredited boat excursions across Sri Lanka</p>
+                <h1 class="text-3xl font-extrabold">Explore Scheduled Trips</h1>
+                <p class="text-cyan-50 text-sm mt-1">Choose from accredited boat excursions across Sri Lanka</p>
             </div>
             <button id="add-package-btn" onclick="App.openTripModal()" class="hidden px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl text-sm shadow-lg shadow-teal-600/30 transition">
                 + Add Trip
@@ -511,7 +511,12 @@
 
     <!-- 12. TRIP SCHEDULE VIEW -->
     <div id="trip-schedule-view" class="view-page hidden max-w-6xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-6">Trip Schedules & Departure Times</h1>
+        <div class="page-banner banner-river">
+            <div>
+                <h1 class="text-3xl font-extrabold">Trip Schedules &amp; Departure Times</h1>
+                <p class="text-cyan-50 text-sm mt-1">Check departure times and live seat availability before you book</p>
+            </div>
+        </div>
         <div id="trip-schedules-list" class="space-y-4"></div>
     </div>
 
@@ -522,6 +527,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left: Seat Map Grid -->
             <div class="lg:col-span-2 glass-card p-6 rounded-3xl shadow-xl">
+                <div id="booking-trip-photo"></div>
                 <h2 id="booking-trip-title" class="text-2xl font-extrabold text-slate-900 mb-1">Package Title</h2>
                 <p class="text-xs text-cyan-700 font-bold mb-6">Departure: <span id="booking-trip-time">Time</span> | Boat: <span id="booking-trip-boat">Boat</span></p>
 
@@ -622,7 +628,12 @@
 
     <!-- 15. BOOKING HISTORY VIEW -->
     <div id="customer-profile-view" class="view-page hidden max-w-3xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-6">My Profile</h1>
+        <div class="page-banner banner-river">
+            <div>
+                <h1 class="text-3xl font-extrabold">My Profile</h1>
+                <p class="text-cyan-50 text-sm mt-1">Keep your contact details up to date for smooth boarding</p>
+            </div>
+        </div>
         <div class="glass-card rounded-2xl shadow p-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-sm">
                 <div><span class="text-slate-500 text-xs uppercase font-bold">Member Since</span><div id="profile-member-since" class="font-semibold text-slate-800">-</div></div>
@@ -663,7 +674,12 @@
     </div>
 
     <div id="booking-history-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-6">Booking History</h1>
+        <div class="page-banner banner-whale">
+            <div>
+                <h1 class="text-3xl font-extrabold">Booking History</h1>
+                <p class="text-cyan-50 text-sm mt-1">Every reservation, boarding pass and payment in one place</p>
+            </div>
+        </div>
         <div class="glass-card rounded-2xl overflow-hidden shadow">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-100 text-slate-600 text-xs uppercase font-bold">
@@ -783,8 +799,11 @@
 
     <!-- 19. REVIEWS VIEW -->
     <div id="reviews-view" class="view-page hidden max-w-6xl mx-auto px-4 py-10">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-extrabold text-slate-900">Tourist Feedback & Star Ratings</h1>
+        <div class="page-banner banner-reef">
+            <div>
+                <h1 class="text-3xl font-extrabold">Tourist Feedback &amp; Star Ratings</h1>
+                <p class="text-cyan-50 text-sm mt-1">Real experiences from guests who sailed with us</p>
+            </div>
             <button id="add-review-btn" onclick="App.openReviewModal()" class="hidden px-5 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-xl text-sm shadow-lg shadow-cyan-600/30 transition">
                 + Write a Review
             </button>
@@ -863,8 +882,10 @@
 
     <!-- 22. AUTHENTICATION LOGIN VIEW -->
     <div id="login-view" class="view-page hidden max-w-lg mx-auto px-4 py-12">
-        <div class="glass-card p-8 rounded-3xl shadow-2xl border-t-4 border-cyan-500">
-            <h1 class="text-3xl font-extrabold text-slate-900 mb-1 text-center">RiveraQuest Account Sign In</h1>
+        <div class="glass-card rounded-3xl shadow-2xl overflow-hidden">
+            <div class="login-photo banner-coast"><div><span class="text-amber-300 text-xs font-bold uppercase tracking-widest">RiveraQuest Safaris</span><div class="text-2xl font-extrabold">Welcome aboard</div></div></div>
+            <div class="p-8">
+            <h1 class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Account Sign In</h1>
             <p class="text-xs text-slate-500 text-center mb-6">Authenticate to access your stakeholder workspace</p>
 
             <form onsubmit="event.preventDefault(); AuthState.loginWithCredentials(document.getElementById('login-email').value, document.getElementById('login-password').value);" class="space-y-4 mb-8">
@@ -890,6 +911,7 @@
                     <button onclick="AuthState.loginWithCredentials('marketing@boatsafari.lk', 'marketing123')" class="p-2.5 bg-purple-50 text-purple-800 hover:bg-purple-100 rounded-xl text-left border border-purple-200">🏷 Marketing Officer</button>
                     <button onclick="AuthState.loginWithCredentials('admin@boatsafari.lk', 'admin123')" class="p-2.5 bg-indigo-50 text-indigo-800 hover:bg-indigo-100 rounded-xl text-left border border-indigo-200">⚙️ System Admin</button>
                 </div>
+            </div>
             </div>
         </div>
     </div>

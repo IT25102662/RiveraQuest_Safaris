@@ -207,3 +207,22 @@ button:not(:disabled):active { transform: translateY(1px); }
     background: rgba(6, 24, 39, 0.72); color: #f7c95a; backdrop-filter: blur(4px);
 }
 .glass-card:has(> .scenery), .glass-card:has(.scenery) { overflow: hidden; }
+
+/* ---------- Stage 4: photo page banners ---------- */
+.page-banner, .login-photo {
+    position: relative; color: #ffffff; overflow: hidden;
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+}
+.page-banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    border-radius: 1.5rem; padding: 2rem; margin-bottom: 2rem; min-height: 130px;
+    box-shadow: var(--shadow-soft);
+}
+.login-photo { display: flex; align-items: flex-end; padding: 1.5rem 2rem; min-height: 150px; }
+.page-banner > *, .login-photo > * { position: relative; z-index: 1; }
+.page-banner h1 { color: #ffffff; text-shadow: 0 2px 12px rgba(6, 24, 39, 0.6); }
+.banner-river { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/river-banner.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-whale { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/whale-banner.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-reef  { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/reef-banner.jpg'), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-coast { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/coast-banner.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+@media (max-width: 640px) { .page-banner { flex-direction: column; align-items: flex-start; padding: 1.25rem; } }

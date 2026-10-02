@@ -266,6 +266,8 @@ case 'customer-profile-view':
             } else {
                 upcomingContainer.innerHTML = active.map(b => `
                     <div class="glass-card p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-cyan-500">
+                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                        <div class="w-36 shrink-0">${Scenery.html(b.trip, 'h-24', 'rounded-xl overflow-hidden')}</div>
                         <div>
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="font-mono font-bold text-cyan-700">${b.bookingReference}</span>
@@ -273,6 +275,7 @@ case 'customer-profile-view':
                             </div>
                             <h4 class="text-lg font-bold text-slate-800">${b.trip.route.origin} → ${b.trip.route.destination}</h4>
                             <p class="text-xs text-slate-500 mt-1">🗓 Departure: <strong>${b.trip.tripDate} ${b.trip.departureTime}</strong> | 🚤 Boat: ${b.trip.boat.name} | Seats: ${b.seatNumbers}</p>
+                        </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <button onclick="App.navigate('booking-details-view', {bookingId: ${b.id}})" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition">Digital Boarding Pass</button>
@@ -844,6 +847,8 @@ case 'customer-profile-view':
         this.currentPromoCode = '';
         document.getElementById('promo-code-input').value = '';
 
+        const photoBox = document.getElementById('booking-trip-photo');
+        if (photoBox) photoBox.innerHTML = Scenery.html(trip, 'h-48', 'rounded-2xl mb-5 overflow-hidden');
         document.getElementById('booking-trip-title').textContent = `${trip.route.origin} → ${trip.route.destination}`;
         document.getElementById('booking-trip-time').textContent = `${trip.tripDate} ${trip.departureTime}`;
         document.getElementById('booking-trip-boat').textContent = `${trip.boat.name} (${trip.boat.capacity} Max Capacity)`;
