@@ -11,6 +11,8 @@ import com.boatsafari.repository.MarketingOfficerRepository;
 import com.boatsafari.repository.PromotionRepository;
 import com.boatsafari.repository.TripRepository;
 import com.boatsafari.service.PromotionService;
+import com.boatsafari.strategy.DiscountCalculator;
+import com.boatsafari.strategy.DiscountStrategyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,8 @@ public class PromotionServiceImpl implements PromotionService {
     
     @Autowired
     private TripRepository tripRepository;
+
+    private final DiscountStrategyFactory discountStrategyFactory = new DiscountStrategyFactory();
     
     private void validate(Promotion promotion) {
         if (promotion.getCode() == null || promotion.getCode().trim().isEmpty()) {
@@ -202,16 +206,8 @@ public class PromotionServiceImpl implements PromotionService {
                     + String.format("%,.0f", promo.getMinBookingAmount()) + ".");
         }
 
-        double discount;
-        if (promo.getDiscountType() == DiscountType.FIXED_AMOUNT) {
-            discount = promo.getFixedAmount() == null ? 0.0 : promo.getFixedAmount();
-        } else {
-            double pct = promo.getDiscountPercentage() == null ? 0.0 : promo.getDiscountPercentage();
-            discount = totalPrice * pct / 100.0;
-            if (promo.getMaxDiscount() != null && promo.getMaxDiscount() > 0) {
-                discount = Math.min(discount, promo.getMaxDiscount());
-            }
-        }
-        return Math.min(discount, totalPrice);
+        // Strategy + Factory: the factory picks the algorithm, the context applies it
+        DiscountCalculator calculator = new DiscountCalculator(discountStrategyFactory.create(promo.getDiscountType()));
+        return calculator.calculate(promo, totalPrice);
     }
 }
