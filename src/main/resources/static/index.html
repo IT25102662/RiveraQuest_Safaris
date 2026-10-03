@@ -1023,11 +1023,11 @@
             <form onsubmit="event.preventDefault(); AuthState.loginWithCredentials(document.getElementById('login-email').value, document.getElementById('login-password').value);" class="space-y-4 mb-8">
                 <div>
                     <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Email Address</label>
-                    <input type="email" id="login-email" value="tourist@gmail.com" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                    <input type="email" id="login-email" placeholder="you@example.com" autocomplete="username" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Password</label>
-                    <input type="password" id="login-password" value="tourist123" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                    <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
                 </div>
                 <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-2xl text-sm shadow-lg shadow-cyan-600/30 transition">Authenticate & Enter Workspace →</button>
             </form>
