@@ -26,8 +26,30 @@ public class BoatServiceImpl implements BoatService {
   private MaintenanceLogRepository maintenanceLogRepository;
   @Autowired
   private FleetManagerRepository fleetManagerRepository;
+  private static final int MAX_BOAT_CAPACITY = 100;
+
+  private void validateBoat(Boat boat) {
+    if (boat.getName() == null || boat.getName().trim().isEmpty()) {
+      throw new BusinessRuleException("Boat name is required.");
+    }
+    if (boat.getCapacity() == null || boat.getCapacity() < 1 || boat.getCapacity() > MAX_BOAT_CAPACITY) {
+      throw new BusinessRuleException("Boat capacity must be between 1 and " + MAX_BOAT_CAPACITY + " passengers.");
+    }
+    if (boat.getFuelLevelPercentage() != null
+        && (boat.getFuelLevelPercentage() < 0 || boat.getFuelLevelPercentage() > 100)) {
+      throw new BusinessRuleException("Fuel level must be between 0 and 100 percent.");
+    }
+    if (boat.getCrewCount() != null && boat.getCrewCount() < 0) {
+      throw new BusinessRuleException("Crew count cannot be negative.");
+    }
+  }
+
   @Override
   public Boat createBoat(Long fleetManagerId, Boat boat) {
+    validateBoat(boat);
+    if (boat.getRegistrationNumber() == null || boat.getRegistrationNumber().trim().isEmpty()) {
+      throw new BusinessRuleException("Boat registration number is required.");
+    }
     if (boat.getRegistrationNumber() != null &&
         boatRepository.findByRegistrationNumber(boat.getRegistrationNumber()).isPresent()) {
       throw new BusinessRuleException("Boat with registration number " + boat.getRegistrationNumber() + " already exists!");
@@ -56,6 +78,7 @@ public class BoatServiceImpl implements BoatService {
   @Override
   public Boat updateBoat(Long id, Boat updatedBoat) {
     Boat existing = getBoatById(id);
+    validateBoat(updatedBoat);
     if ("CRITICAL".equalsIgnoreCase(updatedBoat.getEngineStatus()) && "AVAILABLE".equalsIgnoreCase(updatedBoat.getStatus())) {
       throw new BusinessRuleException("Cannot set boat status to AVAILABLE when engine status is CRITICAL!");
 }

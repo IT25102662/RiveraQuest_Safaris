@@ -223,14 +223,28 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking updateBookingStatus(Long id, String status) {
         Booking booking = getBookingById(id);
-        booking.setStatus(status);
+        String normalised = status == null ? "" : status.trim().toUpperCase();
+        if (!List.of("CONFIRMED", "PENDING", "COMPLETED", "CANCELLED").contains(normalised)) {
+            throw new BusinessRuleException("Invalid booking status '" + status
+                    + "'. Allowed values: CONFIRMED, PENDING, COMPLETED, CANCELLED.");
+        }
+        if ("CANCELLED".equals(normalised)) {
+            // use the normal cancel flow so the seats are released
+            return cancelBookingWithReason(id, "Cancelled by user/desk officer");
+        }
+        booking.setStatus(normalised);
         return bookingRepository.save(booking);
     }
 
     @Override
     public Booking validateCustomerBooking(Long id, String validationStatus) {
         Booking booking = getBookingById(id);
-        booking.setValidationStatus(validationStatus);
+        String normalised = validationStatus == null ? "" : validationStatus.trim().toUpperCase();
+        if (!List.of("VALIDATED", "PENDING_VALIDATION").contains(normalised)) {
+            throw new BusinessRuleException("Invalid validation status '" + validationStatus
+                    + "'. Allowed values: VALIDATED, PENDING_VALIDATION.");
+        }
+        booking.setValidationStatus(normalised);
         return bookingRepository.save(booking);
     }
 }

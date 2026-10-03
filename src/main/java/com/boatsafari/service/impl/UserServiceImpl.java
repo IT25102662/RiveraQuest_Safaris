@@ -40,6 +40,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user) {
+        String email = user.getEmail() == null ? "" : user.getEmail().trim();
+        if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$")) {
+            throw new BusinessRuleException("Please enter a valid email address.");
+        }
+        user.setEmail(email);
+        if (user.getFullName() == null || user.getFullName().trim().isEmpty()) {
+            throw new BusinessRuleException("Full name is required.");
+        }
+        if (user.getFullName().trim().length() > 100 || user.getFullName().trim().split(" ", 2)[0].length() > 50) {
+            throw new BusinessRuleException("Full name is too long.");
+        }
+        if (user.getPassword() == null || user.getPassword().length() < 6) {
+            throw new BusinessRuleException("Password must be at least 6 characters long.");
+        }
         if (customerRepository.existsByEmail(user.getEmail())) {
             throw new BusinessRuleException("An account with this email already exists: " + user.getEmail());
         }
@@ -52,6 +66,8 @@ public class UserServiceImpl implements UserService {
         customer.setLastName(parts.length > 1 ? parts[1] : "");
         customer.setEmail(user.getEmail());
         customer.setPasswordHash(user.getPassword());
+        customer.setPhoneNumber(user.getPhoneNumber());
+        customer.setNicOrPassport(user.getNicOrPassport());
         Customer saved = customerRepository.save(customer);
 
         // Return a transient User-shaped response for API compatibility — not persisted to the legacy users table
