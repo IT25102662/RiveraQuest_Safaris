@@ -213,6 +213,13 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus("CANCELLED");
         booking.setCancellationReason(reason);
 
+        // give the voucher use back so usage limits stay accurate
+        Promotion usedPromo = booking.getPromotion();
+        if (usedPromo != null && usedPromo.getUsageCount() != null && usedPromo.getUsageCount() > 0) {
+            usedPromo.setUsageCount(usedPromo.getUsageCount() - 1);
+            promotionRepository.save(usedPromo);
+        }
+
         Trip trip = booking.getTrip();
         trip.setBookedSeats(Math.max(0, trip.getBookedSeats() - booking.getSeatCount()));
         tripRepository.save(trip);
