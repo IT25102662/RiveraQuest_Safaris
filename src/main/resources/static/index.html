@@ -68,6 +68,7 @@
             <a href="#" onclick="App.navigate('home-view')" data-view="home-view" title="Home" class="nav-tab"><span class="nav-ico" aria-hidden="true">🏠</span><span>Home</span></a>
             <a href="#" onclick="App.navigate('package-listing-view')" data-view="package-listing-view" title="Browse Safari Trips" class="nav-tab"><span class="nav-ico" aria-hidden="true">🚤</span><span>Trips</span></a>
             <a href="#" onclick="App.navigate('trip-schedule-view')" data-view="trip-schedule-view" title="Departure Schedules" class="nav-tab"><span class="nav-ico" aria-hidden="true">📅</span><span>Schedules</span></a>
+            <a href="#" onclick="App.navigate('register-view')" data-view="register-view" title="Create an account" class="nav-tab"><span class="nav-ico" aria-hidden="true">📝</span><span>Register</span></a>
         </div>
     </div>
 </nav>
@@ -157,7 +158,8 @@
 
                 <div class="flex flex-wrap justify-center items-center gap-4 mb-10">
                     <button onclick="App.navigate('package-listing-view')" class="px-8 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-extrabold rounded-2xl text-sm shadow-xl shadow-amber-500/30 transition">Explore Safari Trips</button>
-                    <button onclick="App.navigate('tourist-dashboard-view')" class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl text-sm border border-white/40 backdrop-blur-md shadow-xl transition">View My Bookings</button>
+                    <button onclick="App.navigate('tourist-dashboard-view')" class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl text-sm border border-white/40 backdrop-blur-md shadow-xl transition member-only">View My Bookings</button>
+                    <button onclick="App.navigate('register-view')" class="guest-only px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl text-sm border border-amber-300/70 backdrop-blur-md shadow-xl transition">Create Free Account</button>
                 </div>
 
                 <!-- Quick Search Bar Overlay -->
@@ -189,6 +191,20 @@
                 <svg class="wave-divider wave-bob" style="width:120%;margin-left:-10%;opacity:.55" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 30 Q120 0 240 30 T480 30 T720 30 T960 30 T1200 30 T1440 30 V60 H0Z" fill="#5fd3e4"/></svg>
                 <svg class="wave-divider wave-bob" style="width:120%;margin-left:-10%;margin-top:-40px;animation-duration:9s" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 34 Q120 8 240 34 T480 34 T720 34 T960 34 T1200 34 T1440 34 V60 H0Z" fill="#98e6f0"/></svg>
                 <svg class="wave-divider" style="margin-top:-36px" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 40 Q180 10 360 40 T720 40 T1080 40 T1440 40 V60 H0Z" fill="#f3f8fb"/></svg>
+            </div>
+        </section>
+
+        <!-- Guest invitation: only visitors who are not signed in see this -->
+        <section class="guest-only max-w-7xl mx-auto px-4 pt-6" aria-label="Create an account">
+            <div class="glass-card rounded-2xl p-5 sm:p-6 border-l-4 border-amber-400 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-extrabold text-slate-900">New to RiveraQuest Safaris?</h2>
+                    <p class="text-sm text-slate-600 mt-1">Create a free account to book seats, use vouchers, manage your bookings and share your feedback after the trip.</p>
+                </div>
+                <div class="flex flex-wrap gap-3 shrink-0">
+                    <button onclick="App.navigate('register-view')" class="px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 font-extrabold rounded-xl text-sm shadow">Create Account</button>
+                    <button onclick="App.navigate('login-view')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-sm">Sign In</button>
+                </div>
             </div>
         </section>
 
@@ -1003,6 +1019,8 @@
                 <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-2xl text-sm shadow-lg shadow-cyan-600/30 transition">Authenticate & Enter Workspace →</button>
             </form>
 
+            <p class="text-center text-sm text-slate-600 mb-6 -mt-4">New to RiveraQuest? <a href="#" onclick="App.navigate('register-view'); return false;" class="font-extrabold text-cyan-700 hover:underline">Create a free account</a></p>
+
             <!-- Authentic Demo Account Shortcuts -->
             <div class="border-t border-slate-100 pt-6">
                 <span class="text-[11px] font-bold text-slate-400 uppercase block text-center mb-3">Or Authenticate As Stakeholder Account:</span>
@@ -1020,25 +1038,41 @@
     </div>
 
     <!-- 23. REGISTER VIEW --> 
-    <div id="register-view" class="view-page hidden max-w-md mx-auto px-4 py-16">
+    <div id="register-view" class="view-page hidden max-w-md mx-auto px-4 py-12">
         <div class="glass-card p-8 rounded-3xl shadow-2xl">
-            <h1 class="text-2xl font-extrabold text-slate-900 mb-2 text-center">Tourist Registration</h1>
-            <p class="text-xs text-slate-500 text-center mb-6">Create RiveraQuest account for online safari bookings</p>
-            <div class="space-y-4">
+            <h1 class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Create Your Account</h1>
+            <p class="text-xs text-slate-500 text-center mb-6">Register as a tourist to book boat safaris online</p>
+            <form id="register-form" novalidate onsubmit="event.preventDefault(); AuthState.registerCustomer({ fullName: document.getElementById('reg-name').value, email: document.getElementById('reg-email').value, phone: document.getElementById('reg-phone').value, idNumber: document.getElementById('reg-id').value, password: document.getElementById('reg-password').value, confirm: document.getElementById('reg-confirm').value });" class="space-y-4">
                 <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Full Name</label>
-                    <input type="text" placeholder="John Smith" class="w-full px-3 py-2 bg-slate-100 rounded-xl text-sm border-0">
+                    <label for="reg-name" class="text-xs font-bold text-slate-500 uppercase block mb-1">Full Name *</label>
+                    <input type="text" id="reg-name" autocomplete="name" placeholder="e.g. Nimal Perera" class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Email Address</label>
-                    <input type="email" placeholder="john@example.com" class="w-full px-3 py-2 bg-slate-100 rounded-xl text-sm border-0">
+                    <label for="reg-email" class="text-xs font-bold text-slate-500 uppercase block mb-1">Email Address *</label>
+                    <input type="email" id="reg-email" autocomplete="email" placeholder="name@example.com" class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="reg-phone" class="text-xs font-bold text-slate-500 uppercase block mb-1">Phone Number *</label>
+                        <input type="tel" id="reg-phone" autocomplete="tel" placeholder="+94 71 234 5678" class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <div>
+                        <label for="reg-id" class="text-xs font-bold text-slate-500 uppercase block mb-1">NIC / Passport *</label>
+                        <input type="text" id="reg-id" placeholder="e.g. 200012345678" class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                    </div>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Password</label>
-                    <input type="password" placeholder="••••••••" class="w-full px-3 py-2 bg-slate-100 rounded-xl text-sm border-0">
+                    <label for="reg-password" class="text-xs font-bold text-slate-500 uppercase block mb-1">Password * <span class="normal-case font-semibold text-slate-400">(at least 6 characters)</span></label>
+                    <input type="password" id="reg-password" autocomplete="new-password" class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
                 </div>
-                <button onclick="App.navigate('tourist-dashboard-view')" class="w-full py-3 bg-cyan-600 text-white font-bold rounded-2xl text-sm shadow-lg">Create Account</button>
-            </div>
+                <div>
+                    <label for="reg-confirm" class="text-xs font-bold text-slate-500 uppercase block mb-1">Confirm Password *</label>
+                    <input type="password" id="reg-confirm" autocomplete="new-password" class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                </div>
+                <p id="register-error" class="hidden text-sm font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2" role="alert"></p>
+                <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-2xl text-sm shadow-lg shadow-cyan-600/30 transition">Create Account</button>
+            </form>
+            <p class="text-center text-sm text-slate-600 mt-6">Already have an account? <a href="#" onclick="App.navigate('login-view'); return false;" class="font-extrabold text-cyan-700 hover:underline">Sign in</a></p>
         </div>
     </div>
 

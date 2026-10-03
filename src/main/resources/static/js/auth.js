@@ -40,19 +40,20 @@ const AuthState = {
         this.updateWorkspaceInfo();
     },
 
-    async loginWithCredentials(email, password) {
+    async loginWithCredentials(email, password, isNewAccount = false) {
         try {
             const res = await API.login({ email, password });
             const sessionUser = {
                 id: res.id,
-                fullName: res.fullName,
+                fullName: (res.fullName || '').trim(),
                 email: res.email,
                 role: res.role,
                 status: res.status,
                 token: res.token
             };
             this.setUserSession(sessionUser);
-            showToast(`Welcome back, ${res.fullName}! Authenticated as ${res.role}`);
+            const shownName = (res.fullName || '').trim();
+            showToast(isNewAccount ? `Account created. Welcome aboard, ${shownName}!` : `Welcome back, ${shownName}! Authenticated as ${res.role}`);
             
             // Redirect to designated role dashboard
             const targetDashboard = ROLE_DASHBOARDS[res.role] || 'home-view';
@@ -64,6 +65,35 @@ const AuthState = {
             showToast(err.message, 'error');
             throw err;
         }
+    },
+
+    async registerCustomer(data) {
+        const box = document.getElementById('register-error');
+        const fail = (msg) => { if (box) { box.textContent = msg; box.classList.remove('hidden'); } showToast(msg, 'error'); };
+        if (box) box.classList.add('hidden');
+
+        const fullName = (data.fullName || '').trim().replace(/\s+/g, ' ');
+        const email = (data.email || '').trim().toLowerCase();
+        const phone = (data.phone || '').trim();
+        const idNumber = (data.idNumber || '').trim();
+        const password = data.password || '';
+
+        if (fullName.length < 2) return fail('Please enter your full name.');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail('Please enter a valid email address.');
+        if (!/^\+?[0-9][0-9\s-]{7,16}$/.test(phone)) return fail('Please enter a valid phone number, for example +94 71 234 5678.');
+        if (!/^[A-Za-z0-9-]{5,20}$/.test(idNumber)) return fail('Please enter a valid NIC or passport number (5 to 20 letters or digits).');
+        if (password.length < 6) return fail('The password must have at least 6 characters.');
+        if (password !== data.confirm) return fail('The two passwords do not match.');
+
+        try {
+            await API.register({ fullName, email, password, phoneNumber: phone, nicOrPassport: idNumber, role: 'CUSTOMER' });
+        } catch (err) {
+            return fail(err.message || 'Registration failed. Please try again.');
+        }
+        const form = document.getElementById('register-form');
+        if (form) form.reset();
+        // Sign the new customer in straight away
+        try { await this.loginWithCredentials(email, password, true); } catch (e) { if (window.App) window.App.navigate('login-view'); }
     },
 
     logout() {
