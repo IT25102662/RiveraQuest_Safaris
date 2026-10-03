@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,17 @@ public class PromotionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Promotion>> getAllPromotions() {
-        return ResponseEntity.ok(promotionService.getAllPromotions());
+    public ResponseEntity<List<Promotion>> getAllPromotions(HttpServletRequest request) {
+        List<Promotion> all = promotionService.getAllPromotions();
+        String role = request.getHeader("X-User-Role");
+        boolean manager = role != null && ("ADMIN".equalsIgnoreCase(role.trim()) || "MARKETING_OFFICER".equalsIgnoreCase(role.trim()));
+        if (!manager) {
+            // Everyone else only sees vouchers that can currently be used
+            all = all.stream()
+                    .filter(p -> p.getComputedStatus() == com.boatsafari.model.VoucherStatus.ACTIVE)
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        return ResponseEntity.ok(all);
     }
     
     @GetMapping("/search")

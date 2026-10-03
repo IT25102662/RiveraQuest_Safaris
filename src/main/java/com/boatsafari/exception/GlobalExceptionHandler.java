@@ -37,6 +37,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage());
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        return build(HttpStatus.FORBIDDEN, "Access Denied", ex.getMessage());
+    }
+
     @ExceptionHandler(BusinessRuleException.class)
     public ResponseEntity<Map<String, Object>> handleBusinessRule(BusinessRuleException ex) {
         return build(HttpStatus.BAD_REQUEST, "Business Rule Violation", ex.getMessage());
