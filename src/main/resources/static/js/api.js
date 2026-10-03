@@ -97,6 +97,7 @@ const API = {
 
     // Booking APIs
     getBookings: (userId) => fetch(`${API_BASE}/bookings${userId ? '?userId=' + userId : ''}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
+    getTakenSeats: (tripId) => fetch(`${API_BASE}/bookings/trip/${tripId}/seats`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     getBooking: (id) => fetch(`${API_BASE}/bookings/${id}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     createBooking: (bookingDTO) => fetch(`${API_BASE}/bookings`, {
         method: 'POST',

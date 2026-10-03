@@ -1009,11 +1009,12 @@ case 'customer-profile-view':
         const grid = document.getElementById('seat-map-grid');
         grid.innerHTML = '';
         const capacity = trip.boat.capacity;
-        const bookedCount = trip.bookedSeats;
+        let takenSeats = [];
+        try { takenSeats = await API.getTakenSeats(tripId); } catch (e) { takenSeats = []; }
 
         for (let i = 1; i <= capacity; i++) {
             const seatNum = `S-${i < 10 ? '0' + i : i}`;
-            const isAlreadyBooked = i <= bookedCount;
+            const isAlreadyBooked = takenSeats.includes(seatNum);
 
             const seatBtn = document.createElement('button');
             seatBtn.className = `seat-btn ${isAlreadyBooked ? 'seat-booked' : 'seat-available'}`;

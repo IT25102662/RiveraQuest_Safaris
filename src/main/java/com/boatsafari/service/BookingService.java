@@ -15,4 +15,5 @@ public interface BookingService {
     Booking cancelBookingWithReason(Long id, String reason);
     Booking updateBookingStatus(Long id, String status);
     Booking validateCustomerBooking(Long id, String validationStatus);
+    List<String> getTakenSeats(Long tripId);
 }

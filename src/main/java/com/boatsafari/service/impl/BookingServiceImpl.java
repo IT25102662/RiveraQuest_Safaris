@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -84,6 +85,42 @@ public class BookingServiceImpl implements BookingService {
                     " seat(s), but only " + trip.getAvailableSeats() + " seat(s) remain available!");
         }
 
+        // Seat validation (runs before any voucher or seat counters are changed)
+        List<String> takenSeats = getTakenSeats(trip.getId());
+        String seats = dto.getSeatNumbers();
+        if (seats == null || seats.trim().isEmpty()) {
+            List<String> assigned = new ArrayList<>();
+            for (int i = 1; i <= trip.getPassengerCapacity() && assigned.size() < dto.getSeatCount(); i++) {
+                String label = String.format("S-%02d", i);
+                if (!takenSeats.contains(label)) assigned.add(label);
+            }
+            if (assigned.size() < dto.getSeatCount()) {
+                throw new BusinessRuleException("Not enough free seats are left on this trip.");
+            }
+            seats = String.join(", ", assigned);
+        } else {
+            List<String> requested = new ArrayList<>();
+            for (String raw : seats.split(",")) {
+                String seat = raw.trim().toUpperCase();
+                if (seat.isEmpty()) continue;
+                if (!seat.matches("S-\\d{1,3}")) {
+                    throw new BusinessRuleException("Invalid seat number: " + raw.trim());
+                }
+                if (requested.contains(seat)) {
+                    throw new BusinessRuleException("Seat " + seat + " was selected more than once.");
+                }
+                if (takenSeats.contains(seat)) {
+                    throw new BusinessRuleException("Seat " + seat + " is already booked. Please choose another seat.");
+                }
+                requested.add(seat);
+            }
+            if (requested.size() != dto.getSeatCount()) {
+                throw new BusinessRuleException("The number of seat numbers (" + requested.size()
+                        + ") does not match the seat count (" + dto.getSeatCount() + ").");
+            }
+            seats = String.join(", ", requested);
+        }
+
         double totalPrice = trip.getPrice() * dto.getSeatCount();
         double discountAmount = 0.0;
         Promotion appliedPromo = null;
@@ -98,17 +135,6 @@ public class BookingServiceImpl implements BookingService {
         }
 
         double finalPrice = totalPrice - discountAmount;
-
-        String seats = dto.getSeatNumbers();
-        if (seats == null || seats.trim().isEmpty()) {
-            int startSeat = trip.getBookedSeats() + 1;
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < dto.getSeatCount(); i++) {
-                if (i > 0) sb.append(", ");
-                sb.append(String.format("S-%02d", startSeat + i));
-            }
-            seats = sb.toString();
-        }
 
         trip.setBookedSeats(trip.getBookedSeats() + dto.getSeatCount());
         tripRepository.save(trip);
@@ -135,6 +161,19 @@ public class BookingServiceImpl implements BookingService {
         }
 
         return bookingRepository.save(booking);
+    }
+
+    @Override
+    public List<String> getTakenSeats(Long tripId) {
+        List<String> taken = new ArrayList<>();
+        for (Booking b : bookingRepository.findByTripIdAndStatusNot(tripId, "CANCELLED")) {
+            if (b.getSeatNumbers() == null) continue;
+            for (String s : b.getSeatNumbers().split(",")) {
+                String seat = s.trim().toUpperCase();
+                if (!seat.isEmpty() && !taken.contains(seat)) taken.add(seat);
+            }
+        }
+        return taken;
     }
 
     @Override
