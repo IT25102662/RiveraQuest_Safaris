@@ -17,6 +17,7 @@ import com.boatsafari.repository.StaffRepository;
 import com.boatsafari.repository.UserRepository;
 import com.boatsafari.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
         Optional<Customer> customerOpt = customerRepository.findByEmail(email);
         if (customerOpt.isPresent()) {
             Customer c = customerOpt.get();
-            if (!c.getPasswordHash().equals(password)) {
+            if (!passwordMatches(c.getPasswordHash(), password)) {
                 throw new BusinessRuleException("Invalid email or password!");
             }
             String status = "Active".equalsIgnoreCase(c.getAccountStatus()) ? "ACTIVE" : "SUSPENDED";
@@ -78,13 +79,22 @@ public class UserServiceImpl implements UserService {
         Optional<Staff> staffOpt = staffRepository.findByEmail(email);
         if (staffOpt.isPresent()) {
             Staff s = staffOpt.get();
-            if (!s.getPasswordHash().equals(password)) {
+            if (!passwordMatches(s.getPasswordHash(), password)) {
                 throw new BusinessRuleException("Invalid email or password!");
             }
             return new LoginResponseDTO(s.getId(), s.getName(), s.getEmail(), mapStaffRole(s), "ACTIVE", "token-" + s.getId());
         }
 
         throw new ResourceNotFoundException("No account found with email: " + email);
+    }
+
+    private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+
+    /** Accepts a bcrypt hash ($2a$/$2b$/$2y$) or, for the older demo accounts, a plain stored password. */
+    private boolean passwordMatches(String stored, String entered) {
+        if (stored == null || entered == null) return false;
+        if (stored.startsWith("$2")) return PASSWORD_ENCODER.matches(entered, stored);
+        return stored.equals(entered);
     }
 
     private String mapStaffRole(Staff s) {
