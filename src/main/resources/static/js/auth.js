@@ -13,7 +13,7 @@ const DEFAULT_USERS = {
     CUSTOMER: { id: 1, fullName: "John Smith", email: "tourist@gmail.com", role: "CUSTOMER" },    DESK_OFFICER: { id: 2, fullName: "Nimali Silva", email: "desk@boatsafari.lk", role: "DESK_OFFICER" },
     FLEET_MANAGER: { id: 3, fullName: "Captain Ruwan", email: "fleet@boatsafari.lk", role: "FLEET_MANAGER" },
     SAFETY_OFFICER: { id: 4, fullName: "Dhammika Jayawardena", email: "safety@boatsafari.lk", role: "SAFETY_OFFICER" },
-    MARKETING_OFFICER: { id: 5, fullName: "Chathuri Wickramasinghe", email: "marketing@boatsafari.lk", role: "MARKETING_OFFICER" },
+    MARKETING_OFFICER: { id: 5, fullName: "R.A. Sandeera", email: "marketing@boatsafari.lk", role: "MARKETING_OFFICER" },
     ADMIN: { id: 1, fullName: "Kasun Perera", email: "admin@boatsafari.lk", role: "ADMIN" }
 };
 

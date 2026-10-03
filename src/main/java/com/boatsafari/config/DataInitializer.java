@@ -70,7 +70,7 @@ public class DataInitializer implements CommandLineRunner {
         User deskOfficer = userRepository.save(new User(null, "Jalina Waruna (Desk)", "desk@boatsafari.lk", "desk123", "+94 77 100 0002", "925678123V", "DESK_OFFICER", "ACTIVE"));
         User fleetManager = userRepository.save(new User(null, "chamikara liyanage", "fleet@boatsafari.lk", "fleet123", "+94 77 100 0003", "791238901V", "FLEET_MANAGER", "ACTIVE"));
         User safetyOfficer = userRepository.save(new User(null, "Uthsara ", "safety@boatsafari.lk", "safety123", "+94 77 100 0004", "853456789V", "SAFETY_OFFICER", "ACTIVE"));
-        User marketingOfficer = userRepository.save(new User(null, "Chathuri Wickramasinghe", "marketing@boatsafari.lk", "marketing123", "+94 77 100 0005", "956789012V", "MARKETING_OFFICER", "ACTIVE"));
+        User marketingOfficer = userRepository.save(new User(null, "R.A. Sandeera", "marketing@boatsafari.lk", "marketing123", "+94 77 100 0005", "956789012V", "MARKETING_OFFICER", "ACTIVE"));
         User customer1 = userRepository.save(new User(null, "John Smith (Tourist)", "tourist@gmail.com", "tourist123", "+94 71 888 9999", "N-12345678", "CUSTOMER", "ACTIVE"));
         User customer2 = userRepository.save(new User(null, "Sarah Jenkins", "sarah@gmail.com", "sarah123", "+94 71 555 4444", "P-98765432", "CUSTOMER", "ACTIVE"));
 
@@ -108,7 +108,7 @@ public class DataInitializer implements CommandLineRunner {
         safetyOfficerRepository.save(safetyStaff);
 
         MarketingOfficer marketingStaff = new MarketingOfficer();
-        marketingStaff.setName("Chathuri Wickramasinghe");
+        marketingStaff.setName("R.A. Sandeera");
         marketingStaff.setEmail("marketing@boatsafari.lk");
         marketingStaff.setPasswordHash("marketing123");
         marketingStaff.setHireDate(LocalDate.now().minusMonths(8));
