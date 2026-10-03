@@ -31,10 +31,17 @@ public abstract class Staff {
     @JoinColumn(name = "supervisor_id")
     private Staff supervisor;
 
+    /** Active or Suspended. Empty (older rows) counts as Active. */
+    @Column(name = "account_status", length = 10)
+    private String accountStatus = "Active";
+
     public Staff() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getAccountStatus() { return accountStatus == null || accountStatus.isBlank() ? "Active" : accountStatus; }
+    public void setAccountStatus(String accountStatus) { this.accountStatus = accountStatus; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

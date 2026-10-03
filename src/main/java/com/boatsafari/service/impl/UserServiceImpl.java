@@ -1,5 +1,6 @@
 package com.boatsafari.service.impl;
 
+import com.boatsafari.dto.AdminUserDTO;
 import com.boatsafari.dto.LoginRequestDTO;
 import com.boatsafari.dto.LoginResponseDTO;
 import com.boatsafari.exception.BusinessRuleException;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,8 +75,10 @@ public class UserServiceImpl implements UserService {
             if (!passwordMatches(c.getPasswordHash(), password)) {
                 throw new BusinessRuleException("Invalid email or password!");
             }
-            String status = "Active".equalsIgnoreCase(c.getAccountStatus()) ? "ACTIVE" : "SUSPENDED";
-            return new LoginResponseDTO(c.getId(), c.getFullName(), c.getEmail(), "CUSTOMER", status, "token-" + c.getId());
+            if (!"Active".equalsIgnoreCase(c.getAccountStatus())) {
+                throw new BusinessRuleException("Your account has been suspended. Please contact the administrator.");
+            }
+            return new LoginResponseDTO(c.getId(), c.getFullName(), c.getEmail(), "CUSTOMER", "ACTIVE", "token-" + c.getId());
         }
 
         Optional<Staff> staffOpt = staffRepository.findByEmail(email);
@@ -81,6 +86,9 @@ public class UserServiceImpl implements UserService {
             Staff s = staffOpt.get();
             if (!passwordMatches(s.getPasswordHash(), password)) {
                 throw new BusinessRuleException("Invalid email or password!");
+            }
+            if (!"Active".equalsIgnoreCase(s.getAccountStatus())) {
+                throw new BusinessRuleException("Your account has been suspended. Please contact the administrator.");
             }
             return new LoginResponseDTO(s.getId(), s.getName(), s.getEmail(), mapStaffRole(s), "ACTIVE", "token-" + s.getId());
         }
@@ -104,6 +112,68 @@ public class UserServiceImpl implements UserService {
         if (s instanceof MarketingOfficer) return "MARKETING_OFFICER";
         if (s instanceof Administrator) return "ADMIN";
         return "STAFF";
+    }
+
+    /** Every customer and staff member, in one list for the Admin "User Accounts" page. */
+    @Override
+    public List<AdminUserDTO> getAllAccounts() {
+        List<AdminUserDTO> accounts = new ArrayList<>();
+
+        List<Staff> staff = new ArrayList<>(staffRepository.findAll());
+        staff.sort(Comparator.comparing(Staff::getId));
+        for (Staff s : staff) {
+            // Demo staff still keep their phone number in the older users table
+            String phone = userRepository.findByEmail(s.getEmail()).map(User::getPhoneNumber).orElse("");
+            String status = "Active".equalsIgnoreCase(s.getAccountStatus()) ? "ACTIVE" : "SUSPENDED";
+            accounts.add(new AdminUserDTO("STAFF", s.getId(), s.getName(), s.getEmail(), phone, mapStaffRole(s), status));
+        }
+
+        List<Customer> customers = new ArrayList<>(customerRepository.findAll());
+        customers.sort(Comparator.comparing(Customer::getId));
+        for (Customer c : customers) {
+            String status = "Active".equalsIgnoreCase(c.getAccountStatus()) ? "ACTIVE" : "SUSPENDED";
+            accounts.add(new AdminUserDTO("CUSTOMER", c.getId(), c.getFullName(), c.getEmail(), c.getPhoneNumber(), "CUSTOMER", status));
+        }
+        return accounts;
+    }
+
+    /** Suspend or activate one account. The key is "C-<id>" (customer) or "S-<id>" (staff). */
+    @Override
+    public AdminUserDTO updateAccountStatus(String key, String status) {
+        String wanted = status == null ? "" : status.trim().toUpperCase();
+        if (!wanted.equals("ACTIVE") && !wanted.equals("SUSPENDED")) {
+            throw new BusinessRuleException("Status must be ACTIVE or SUSPENDED.");
+        }
+        if (key == null || !key.matches("[CS]-\\d+")) {
+            throw new BusinessRuleException("Invalid account reference: " + key);
+        }
+        Long id = Long.valueOf(key.substring(2));
+        boolean active = wanted.equals("ACTIVE");
+
+        String email;
+        AdminUserDTO result;
+        if (key.startsWith("C-")) {
+            Customer c = customerRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + id));
+            c.setAccountStatus(active ? "Active" : "Inactive");   // the database only allows Active or Inactive here
+            customerRepository.save(c);
+            email = c.getEmail();
+            result = new AdminUserDTO("CUSTOMER", c.getId(), c.getFullName(), c.getEmail(), c.getPhoneNumber(), "CUSTOMER", wanted);
+        } else {
+            Staff s = staffRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Staff member not found with ID: " + id));
+            s.setAccountStatus(active ? "Active" : "Suspended");
+            staffRepository.save(s);
+            email = s.getEmail();
+            result = new AdminUserDTO("STAFF", s.getId(), s.getName(), s.getEmail(), "", mapStaffRole(s), wanted);
+        }
+
+        // Keep the older users table in step, because the login check also reads it
+        userRepository.findByEmail(email).ifPresent(u -> {
+            u.setStatus(wanted);
+            userRepository.save(u);
+        });
+        return result;
     }
 
     @Override

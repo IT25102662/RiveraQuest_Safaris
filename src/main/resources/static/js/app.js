@@ -1860,34 +1860,52 @@ case 'customer-profile-view':
     },
 
     // User Management View
-       async renderUserManagement() {
-        const users = await API.getUsers();
-        const tbody = document.getElementById('users-table-body');
-        if (tbody) {
-            const myEmail = AuthState.currentUser ? AuthState.currentUser.email : null;
-            tbody.innerHTML = users.map(u => `
-                <tr class="border-b border-slate-100 hover:bg-slate-50">
-                    <td class="p-3 font-bold text-slate-800 text-xs">${u.fullName}</td>
-                    <td class="p-3 text-xs text-slate-600">${u.email}</td>
-                    <td class="p-3 font-mono text-xs text-slate-600">${u.phoneNumber}</td>
-                    <td class="p-3 text-xs font-bold text-cyan-700">${u.role}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 text-xs rounded-full ${u.status === 'ACTIVE' ? 'badge-confirmed' : 'badge-cancelled'}">${u.status}</span></td>
-                    <td class="p-3">
-                        ${u.email === myEmail ? '<span class="text-xs text-slate-400 italic">Current user</span>' : `<button onclick="App.toggleUserStatus(${u.id}, '${u.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'}')" class="px-2.5 py-1 text-xs font-medium rounded-lg ${u.status === 'ACTIVE' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700'} text-white">
-                            ${u.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
-                        </button>`}
-                    </td>
-                </tr>
-            `).join('');
-        }
+    async renderUserManagement() {
+        this._allUsers = await API.getUsers();
+        this.filterUsers();
     },
 
-    async toggleUserStatus(id, newStatus) {
+    filterUsers() {
+        const tbody = document.getElementById('users-table-body');
+        if (!tbody) return;
+        const all = this._allUsers || [];
+        const term = ((document.getElementById('user-search') || {}).value || '').trim().toLowerCase();
+        const role = (document.getElementById('user-role-filter') || {}).value || '';
+        const users = all.filter(u =>
+            (!role || u.role === role) &&
+            (!term || (u.fullName || '').toLowerCase().includes(term) || (u.email || '').toLowerCase().includes(term)));
+
+        const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        const myEmail = AuthState.currentUser ? AuthState.currentUser.email : null;
+        const count = document.getElementById('user-count');
+        if (count) count.textContent = `Showing ${users.length} of ${all.length} accounts`;
+
+        if (!users.length) {
+            tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-sm text-slate-500">No accounts match your search.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = users.map(u => `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="p-3 font-bold text-slate-800 text-xs">${esc(u.fullName)}</td>
+                <td class="p-3 text-xs text-slate-600">${esc(u.email)}</td>
+                <td class="p-3 font-mono text-xs text-slate-600">${esc(u.phoneNumber) || '—'}</td>
+                <td class="p-3 text-xs font-bold text-cyan-700">${esc(u.role)}</td>
+                <td class="p-3"><span class="px-2 py-0.5 text-xs rounded-full ${u.status === 'ACTIVE' ? 'badge-confirmed' : 'badge-cancelled'}">${esc(u.status)}</span></td>
+                <td class="p-3">
+                    ${u.email === myEmail ? '<span class="text-xs text-slate-400 italic">Current user</span>' : `<button onclick="App.toggleUserStatus('${esc(u.key)}', '${u.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'}')" class="px-2.5 py-1 text-xs font-medium rounded-lg ${u.status === 'ACTIVE' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700'} text-white">
+                        ${u.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+                    </button>`}
+                </td>
+            </tr>
+        `).join('');
+    },
+
+    async toggleUserStatus(key, newStatus) {
         if (!confirm(`Are you sure you want to set this user's status to ${newStatus}?`)) return;
         try {
-            await API.updateUserStatus(id, newStatus);
+            await API.updateUserStatus(key, newStatus);
             showToast(`User status updated to ${newStatus}.`);
-            this.renderUserManagement();
+            await this.renderUserManagement();
         } catch (e) {
             showToast(e.message, 'error');
         }

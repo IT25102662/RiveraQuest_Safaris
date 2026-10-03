@@ -71,7 +71,7 @@ public class Customer {
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public String getFullName() { return firstName + " " + lastName; }
+    public String getFullName() { return ((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName)).trim(); }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

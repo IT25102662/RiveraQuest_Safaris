@@ -1,5 +1,6 @@
 package com.boatsafari.service;
 
+import com.boatsafari.dto.AdminUserDTO;
 import com.boatsafari.dto.LoginRequestDTO;
 import com.boatsafari.dto.LoginResponseDTO;
 import com.boatsafari.model.User;
@@ -14,4 +15,6 @@ public interface UserService {
     User updateUser(Long id, User updatedUser);
     void deleteUser(Long id);
     User updateUserStatus(Long id, String status);
+    List<AdminUserDTO> getAllAccounts();
+    AdminUserDTO updateAccountStatus(String key, String status);
 }
