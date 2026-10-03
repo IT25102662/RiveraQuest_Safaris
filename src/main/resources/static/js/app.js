@@ -1932,3 +1932,26 @@ window.App = App;
 window.showToast = showToast;
 
 document.addEventListener('DOMContentLoaded', () => App.init());
+
+/* Burger menu (phones and tablets): open and close the role menu */
+(function () {
+    const closeMenu = () => {
+        document.body.classList.remove('nav-open');
+        const b = document.getElementById('nav-burger');
+        if (b) { b.setAttribute('aria-expanded', 'false'); b.setAttribute('aria-label', 'Open menu'); }
+    };
+    document.addEventListener('click', (e) => {
+        const burger = e.target.closest('#nav-burger');
+        if (burger) {
+            const open = document.body.classList.toggle('nav-open');
+            burger.setAttribute('aria-expanded', String(open));
+            burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+            return;
+        }
+        if (document.body.classList.contains('nav-open') && (e.target.closest('.nav-tab') || !e.target.closest('.stakeholder-workspace'))) {
+            closeMenu();
+        }
+    });
+    window.addEventListener('resize', () => { if (window.innerWidth > 1023) closeMenu(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+})();

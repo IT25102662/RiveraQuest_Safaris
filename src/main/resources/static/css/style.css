@@ -174,11 +174,10 @@ button:not(:disabled):active { transform: translateY(1px); }
 @media (prefers-reduced-motion: reduce) { .hero-birds { animation: none !important; } }
 
 /* ---------- Stage 3b: photo hero + picture cards ---------- */
-/* Photo layers: your own img/hero.jpg first, then a stock sea photo, then the colour gradient underneath */
+/* Photo layers: a stock sea photo, then the colour gradient underneath */
 .hero-photo {
     background-image:
         linear-gradient(180deg, rgba(6, 24, 39, 0.62) 0%, rgba(6, 24, 39, 0.38) 55%, rgba(6, 24, 39, 0.18) 100%),
-        url('../img/hero.jpg'),
         url('https://images.pexels.com/photos/8300146/pexels-photo-8300146.jpeg?auto=compress&cs=tinysrgb&w=1920'),
         linear-gradient(160deg, #061827 0%, #0b4f6c 48%, #0ea2c1 100%);
     background-size: cover;
@@ -221,10 +220,10 @@ button:not(:disabled):active { transform: translateY(1px); }
 .login-photo { display: flex; align-items: flex-end; padding: 1.5rem 2rem; min-height: 150px; }
 .page-banner > *, .login-photo > * { position: relative; z-index: 1; }
 .page-banner h1 { color: #ffffff; text-shadow: 0 2px 12px rgba(6, 24, 39, 0.6); }
-.banner-river { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/river-banner.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
-.banner-whale { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/whale-banner.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
-.banner-reef  { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/reef-banner.jpg'), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
-.banner-coast { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('../img/coast-banner.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-river { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-whale { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-reef  { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
+.banner-coast { background-image: linear-gradient(90deg, rgba(6, 24, 39, 0.78) 0%, rgba(6, 24, 39, 0.45) 60%, rgba(6, 24, 39, 0.25) 100%), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=1600'), linear-gradient(135deg, #0c2338, #0b6b87); }
 @media (max-width: 640px) { .page-banner { flex-direction: column; align-items: flex-start; padding: 1.25rem; } }
 
 /* ---------- Stage 5: staff pages ---------- */
@@ -234,7 +233,6 @@ button:not(:disabled):active { transform: translateY(1px); }
     height: 56px;
     background-image:
         linear-gradient(90deg, rgba(217, 146, 26, 0.80) 0%, rgba(12, 35, 56, 0.55) 100%),
-        url('../img/coast-banner.jpg'),
         url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'),
         linear-gradient(135deg, #d9921a, #0c2338);
     background-size: cover; background-position: center;
@@ -245,11 +243,11 @@ button:not(:disabled):active { transform: translateY(1px); }
 .feature-tile:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(12, 35, 56, 0.18); }
 .feature-photo { height: 110px; background-size: cover; background-repeat: no-repeat; }
 .feature-photo-lg { height: 190px; }
-.feat-whale { background-image: url('../img/whale.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center 55%; }
-.feat-river { background-image: url('../img/river.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
-.feat-safety { background-image: url('../img/safety.jpg'), url('https://images.pexels.com/photos/36546904/pexels-photo-36546904.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
-.feat-vouchers { background-image: url('../img/vouchers.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
-.feat-vouchers { background-image: linear-gradient(90deg, rgba(217, 146, 26, 0.55), rgba(12, 35, 56, 0.25)), url('../img/vouchers.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #d9921a, #0c2338); }
+.feat-whale { background-image: url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center 55%; }
+.feat-river { background-image: url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
+.feat-safety { background-image: url('https://images.pexels.com/photos/36546904/pexels-photo-36546904.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
+.feat-vouchers { background-image: url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0c2338, #0b6b87); background-position: center; }
+.feat-vouchers { background-image: linear-gradient(90deg, rgba(217, 146, 26, 0.55), rgba(12, 35, 56, 0.25)), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #d9921a, #0c2338); }
 
 /* ---------- Stage 6: image focus + single-line menu ---------- */
 .scenery-river { background-position: center 62%; }
@@ -320,10 +318,10 @@ button:not(:disabled):active { transform: translateY(1px); }
     background: #ffffff; color: var(--vc-dark); font-size: 12px; font-weight: 800; letter-spacing: 0.03em;
     box-shadow: 0 4px 12px rgba(6, 24, 39, 0.28);
 }
-.vs-0 { background-image: linear-gradient(135deg, rgba(14, 155, 184, 0.55), rgba(6, 24, 39, 0.35)), url('../img/river-banner.jpg'), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0e9bb8, #0c2338); }
-.vs-1 { background-image: linear-gradient(135deg, rgba(217, 146, 26, 0.50), rgba(6, 24, 39, 0.35)), url('../img/whale-banner.jpg'), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #d9921a, #0c2338); }
-.vs-2 { background-image: linear-gradient(135deg, rgba(15, 143, 122, 0.50), rgba(6, 24, 39, 0.30)), url('../img/reef-banner.jpg'), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0f8f7a, #0c2338); }
-.vs-3 { background-image: linear-gradient(135deg, rgba(224, 86, 107, 0.45), rgba(6, 24, 39, 0.30)), url('../img/coast-banner.jpg'), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #e0566b, #0c2338); }
+.vs-0 { background-image: linear-gradient(135deg, rgba(14, 155, 184, 0.55), rgba(6, 24, 39, 0.35)), url('https://images.pexels.com/photos/3845059/pexels-photo-3845059.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0e9bb8, #0c2338); }
+.vs-1 { background-image: linear-gradient(135deg, rgba(217, 146, 26, 0.50), rgba(6, 24, 39, 0.35)), url('https://images.pexels.com/photos/17980729/pexels-photo-17980729.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #d9921a, #0c2338); }
+.vs-2 { background-image: linear-gradient(135deg, rgba(15, 143, 122, 0.50), rgba(6, 24, 39, 0.30)), url('https://images.pexels.com/photos/35993701/pexels-photo-35993701.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #0f8f7a, #0c2338); }
+.vs-3 { background-image: linear-gradient(135deg, rgba(224, 86, 107, 0.45), rgba(6, 24, 39, 0.30)), url('https://images.pexels.com/photos/34714738/pexels-photo-34714738.jpeg?auto=compress&cs=tinysrgb&w=800'), linear-gradient(135deg, #e0566b, #0c2338); }
 
 /* ---------- Stage 9: tick-box trip pickers ---------- */
 .trip-checklist {
@@ -430,3 +428,88 @@ button:not(:disabled):active { transform: translateY(1px); }
 .signin-btn { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem 1rem; border-radius:9999px; font-weight:800; font-size:.85rem; color:#0f2a3d; background:linear-gradient(135deg,#fcd34d,#f59e0b); box-shadow:0 4px 12px rgba(245,158,11,.35); transition:transform .15s, box-shadow .15s; }
 .signin-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(245,158,11,.5); }
 .signin-btn.hidden, .member-only.hidden, .guest-only.hidden { display:none !important; }
+
+/* ---------- Stage 13: responsive layout (no burger menu) ---------- */
+html, body { max-width: 100%; overflow-x: hidden; }
+img, video { max-width: 100%; height: auto; }
+
+/* Tables scroll sideways inside their card instead of being clipped */
+.glass-card:has(> table) { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+.glass-card > table { min-width: 640px; }
+
+@media (max-width: 767px) {
+    .hero-scene, .hero-photo { min-height: 420px; }
+    .hero-photo h1 { font-size: 2.1rem !important; line-height: 1.15; }
+    .page-banner h1 { font-size: 1.6rem !important; }
+    .page-banner { padding: 1.1rem !important; border-radius: 1.1rem; }
+    .glass-card { border-radius: 1rem; }
+    h2.text-xl, h2.text-2xl { font-size: 1.15rem; }
+    /* modals: use the full width and keep the content scrollable */
+    [id$="-modal"] > div { padding: 1.25rem !important; border-radius: 1.25rem !important; }
+    [id$="-modal"] .grid.grid-cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* buttons are easy to tap */
+    button, .nav-tab, a[data-view] { min-height: 40px; }
+}
+@media (max-width: 480px) {
+    .brand-name { font-size: 1.35rem !important; }
+    .user-chip-name { max-width: 6rem; }
+    .user-chip-role { display: none; }
+    .hero-photo h1 { font-size: 1.75rem !important; }
+}
+
+/* Stage 13b: keep the header and page inside the phone screen */
+body > header, body > nav, body > main, body > footer { min-width: 0; max-width: 100%; width: 100%; }
+.brand-link { min-width: 0; }
+@media (max-width: 480px) {
+    header .h-20 { height: 4.25rem; }
+    .brand-link { gap: 0.5rem !important; }
+    .brand-badge { width: 2.5rem !important; height: 2.5rem !important; font-size: 1.3rem !important; border-radius: 0.8rem !important; }
+    .brand-name { font-size: 1.05rem !important; }
+    .logout-btn, .signin-btn { padding: 0.5rem 0.65rem; }
+    .hero-photo { padding-left: 1rem; padding-right: 1rem; }
+    .hero-photo p { font-size: 1rem !important; }
+}
+@media (max-width: 360px) {
+    .brand-name { font-size: 0.92rem !important; }
+    .brand-name-gold { display: none; }
+}
+
+/* Stage 13c: burger menu on phones and tablets */
+.burger-btn { display: none; }
+@media (max-width: 1023px) {
+    .burger-btn {
+        display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
+        width: 2.4rem; height: 2.4rem; border-radius: 9999px; cursor: pointer;
+        background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .burger-btn span { display: block; width: 1.05rem; height: 2px; border-radius: 2px; background: #fff; transition: transform 0.2s ease, opacity 0.2s ease; }
+    body.nav-open .burger-btn span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    body.nav-open .burger-btn span:nth-child(2) { opacity: 0; }
+    body.nav-open .burger-btn span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    .stakeholder-workspace:not(.hidden) { display: none; }
+    body.nav-open .stakeholder-workspace:not(.hidden) { display: block; animation: navDrop 0.2s ease-out; }
+    .nav-tabs { flex-direction: column; align-items: stretch; overflow: visible; gap: 0.25rem; scroll-snap-type: none; width: 100%; }
+    .nav-tab { justify-content: flex-start; padding: 0.7rem 1rem !important; font-size: 0.95rem !important; border-radius: 0.9rem !important; }
+    .stakeholder-workspace { padding: 0.5rem 0 0.7rem; }
+}
+@keyframes navDrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { body.nav-open .stakeholder-workspace { animation: none !important; } }
+
+/* Compact header so the burger never overlaps the brand */
+@media (max-width: 900px) {
+    .brand-tagline { display: none !important; }
+    .user-chip > span:last-child { display: none !important; }
+    .user-chip { padding: 0.3rem; }
+    .logout-btn > span:last-child { display: none !important; }
+    .logout-btn { padding: 0.55rem 0.7rem; }
+    .brand-name { font-size: 1.5rem; }
+}
+
+/* Stage 13d: trip overview cards stack on narrow phones */
+@media (max-width: 480px) {
+    #mkt-packages-grid > div { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+    #mkt-packages-grid > div > div:first-child { width: 100%; }
+    #mkt-packages-grid > div > div:first-child > * { width: 100%; }
+    #mkt-packages-grid > div > button { width: 100%; padding: 0.55rem 0.75rem; }
+}

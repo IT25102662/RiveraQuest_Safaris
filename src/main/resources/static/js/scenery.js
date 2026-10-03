@@ -78,7 +78,7 @@ const Scenery = {
     /** Returns the HTML for a picture header. heightClass e.g. 'h-44'. */
     html(trip, heightClass = 'h-40', extraClass = '') {
         const kind = this.kindOf(trip);
-        const bg = `url('img/${kind}.jpg'), url('${this.photoUrl(kind, trip)}'), ${this._svg(kind)}`;
+        const bg = `url('${this.photoUrl(kind, trip)}'), ${this._svg(kind)}`;
         return `<div class="scenery scenery-${kind} ${heightClass} ${extraClass}" style="background-image:${bg.replace(/"/g, '&quot;')}"><span class="scenery-tag">${({river:'River & Mangrove',whale:'Whale Coast',reef:'Island & Reef',coast:'Coastal Cruise'})[kind]}</span></div>`;
     }
 };
