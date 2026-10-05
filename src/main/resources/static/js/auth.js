@@ -1,7 +1,7 @@
 // Auth & Role Session Manager for Boat Safari Management System
 
 const ROLE_DASHBOARDS = {
-    CUSTOMER: 'tourist-dashboard-view',
+    CUSTOMER: 'home-view',
     DESK_OFFICER: 'desk-dashboard-view',
     FLEET_MANAGER: 'fleet-dashboard-view',
     SAFETY_OFFICER: 'safety-dashboard-view',
@@ -13,46 +13,50 @@ const DEFAULT_USERS = {
     CUSTOMER: { id: 1, fullName: "John Smith", email: "tourist@gmail.com", role: "CUSTOMER" },    DESK_OFFICER: { id: 2, fullName: "Nimali Silva", email: "desk@boatsafari.lk", role: "DESK_OFFICER" },
     FLEET_MANAGER: { id: 3, fullName: "Captain Ruwan", email: "fleet@boatsafari.lk", role: "FLEET_MANAGER" },
     SAFETY_OFFICER: { id: 4, fullName: "Dhammika Jayawardena", email: "safety@boatsafari.lk", role: "SAFETY_OFFICER" },
-    MARKETING_OFFICER: { id: 5, fullName: "Chathuri Wickramasinghe", email: "marketing@boatsafari.lk", role: "MARKETING_OFFICER" },
+    MARKETING_OFFICER: { id: 5, fullName: "R.A. Sandeera", email: "marketing@boatsafari.lk", role: "MARKETING_OFFICER" },
     ADMIN: { id: 1, fullName: "Kasun Perera", email: "admin@boatsafari.lk", role: "ADMIN" }
 };
 
 const AuthState = {
     currentUser: null,
+    signedIn: false,
 
     init() {
+        // A visitor is a neutral guest until they sign in; no account is pre-selected.
         const stored = localStorage.getItem('safari_session');
-        if (stored) {
-            try { this.currentUser = JSON.parse(stored); } catch (e) { this.currentUser = DEFAULT_USERS.CUSTOMER; }
-        } else {
-            this.currentUser = DEFAULT_USERS.CUSTOMER;
-            localStorage.setItem('safari_session', JSON.stringify(this.currentUser));
+        this.signedIn = localStorage.getItem('safari_signed_in') === '1' && !!stored;
+        this.currentUser = DEFAULT_USERS.CUSTOMER; // internal fallback so public pages keep working
+        if (this.signedIn) {
+            try { this.currentUser = JSON.parse(stored); } catch (e) { this.signedIn = false; }
         }
         this.updateWorkspaceInfo();
     },
 
     setUserSession(user) {
         this.currentUser = user;
+        this.signedIn = true;
         localStorage.setItem('safari_session', JSON.stringify(user));
+        localStorage.setItem('safari_signed_in', '1');
         this.updateWorkspaceInfo();
     },
 
-    async loginWithCredentials(email, password) {
+    async loginWithCredentials(email, password, isNewAccount = false) {
         try {
             const res = await API.login({ email, password });
             const sessionUser = {
                 id: res.id,
-                fullName: res.fullName,
+                fullName: (res.fullName || '').trim(),
                 email: res.email,
                 role: res.role,
                 status: res.status,
                 token: res.token
             };
             this.setUserSession(sessionUser);
-            showToast(`Welcome back, ${res.fullName}! Authenticated as ${res.role}`);
+            const shownName = (res.fullName || '').trim();
+            showToast(isNewAccount ? `Account created. Welcome aboard, ${shownName}!` : `Welcome back, ${shownName}! Authenticated as ${res.role}`);
             
             // Redirect to designated role dashboard
-            const targetDashboard = ROLE_DASHBOARDS[res.role] || 'tourist-dashboard-view';
+            const targetDashboard = ROLE_DASHBOARDS[res.role] || 'home-view';
             if (window.App) {
                 window.App.navigate(targetDashboard);
             }
@@ -63,8 +67,41 @@ const AuthState = {
         }
     },
 
+    async registerCustomer(data) {
+        const box = document.getElementById('register-error');
+        const fail = (msg) => { if (box) { box.textContent = msg; box.classList.remove('hidden'); } showToast(msg, 'error'); };
+        if (box) box.classList.add('hidden');
+
+        const fullName = (data.fullName || '').trim().replace(/\s+/g, ' ');
+        const email = (data.email || '').trim().toLowerCase();
+        const phone = (data.phone || '').trim();
+        const idNumber = (data.idNumber || '').trim();
+        const password = data.password || '';
+
+        if (fullName.length < 2) return fail('Please enter your full name.');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail('Please enter a valid email address.');
+        if (!/^\+?[0-9][0-9\s-]{7,16}$/.test(phone)) return fail('Please enter a valid phone number, for example +94 71 234 5678.');
+        if (!/^[A-Za-z0-9-]{5,20}$/.test(idNumber)) return fail('Please enter a valid NIC or passport number (5 to 20 letters or digits).');
+        if (password.length < 6) return fail('The password must have at least 6 characters.');
+        if (password !== data.confirm) return fail('The two passwords do not match.');
+
+        try {
+            await API.register({ fullName, email, password, phoneNumber: phone, nicOrPassport: idNumber, role: 'CUSTOMER' });
+        } catch (err) {
+            return fail(err.message || 'Registration failed. Please try again.');
+        }
+        const form = document.getElementById('register-form');
+        if (form) form.reset();
+        // Sign the new customer in straight away
+        try { await this.loginWithCredentials(email, password, true); } catch (e) { if (window.App) window.App.navigate('login-view'); }
+    },
+
     logout() {
-        this.setUserSession(DEFAULT_USERS.CUSTOMER);
+        this.currentUser = DEFAULT_USERS.CUSTOMER;
+        this.signedIn = false;
+        localStorage.removeItem('safari_session');
+        localStorage.removeItem('safari_signed_in');
+        this.updateWorkspaceInfo();
         showToast("Logged out successfully");
         if (window.App) {
             window.App.navigate('login-view');
@@ -72,16 +109,20 @@ const AuthState = {
     },
 
     getDashboardForRole(role) {
-        return ROLE_DASHBOARDS[role] || 'tourist-dashboard-view';
+        return ROLE_DASHBOARDS[role] || 'home-view';
     },
 
     updateWorkspaceInfo() {
-        const role = this.currentUser ? this.currentUser.role : 'CUSTOMER';
+        const role = this.signedIn && this.currentUser ? this.currentUser.role : 'GUEST';
         const fullName = this.currentUser ? this.currentUser.fullName : 'Guest';
 
         // Update workspace headers & sidebars dynamically
         document.querySelectorAll('.logged-user-name').forEach(el => el.textContent = fullName);
         document.querySelectorAll('.logged-user-role').forEach(el => el.textContent = role.replace('_', ' '));
+        document.querySelectorAll('.logged-user-initial').forEach(el => el.textContent = (fullName.trim().charAt(0) || 'G').toUpperCase());
+
+        document.querySelectorAll('.member-only').forEach(el => el.classList.toggle('hidden', role === 'GUEST'));
+        document.querySelectorAll('.guest-only').forEach(el => el.classList.toggle('hidden', role !== 'GUEST'));
 
         // Toggle Workspace Visibility - Each stakeholder has their own dedicated workspace container!
         document.querySelectorAll('.stakeholder-workspace').forEach(ws => {

@@ -1,5 +1,6 @@
 package com.boatsafari.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +18,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // accepted on input, never sent back in responses
     private String password;
 
     private String phoneNumber;

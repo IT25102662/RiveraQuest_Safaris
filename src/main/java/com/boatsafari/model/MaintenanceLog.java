@@ -25,6 +25,12 @@ public class MaintenanceLog {
 
     private String performedBy;
 
+    /** Planned or actual end date of the work (from the database design). */
+    private LocalDate endDate;
+
+    /** Type of work, e.g. Engine Service, Hull Inspection (from the database design). */
+    private String maintenanceType;
+
     private String status = "COMPLETED"; // COMPLETED, IN_PROGRESS, SCHEDULED
 
     public MaintenanceLog() {}
@@ -56,6 +62,10 @@ public class MaintenanceLog {
 
     public String getPerformedBy() { return performedBy; }
     public void setPerformedBy(String performedBy) { this.performedBy = performedBy; }
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+    public String getMaintenanceType() { return maintenanceType; }
+    public void setMaintenanceType(String maintenanceType) { this.maintenanceType = maintenanceType; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

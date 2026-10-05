@@ -56,6 +56,12 @@ const API = {
         headers: getAuthHeaders(),
         body: JSON.stringify(log)
     }).then(res => handleRes(res)),
+    updateMaintenance: (logId, log) => fetch(`${API_BASE}/boats/maintenance/${logId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(log)
+    }).then(res => handleRes(res)),
+    deleteMaintenance: (logId) => fetch(`${API_BASE}/boats/maintenance/${logId}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
     getMaintenanceLogs: (boatId) => fetch(`${API_BASE}/boats/${boatId}/maintenance`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     getAllMaintenanceLogs: () => fetch(`${API_BASE}/boats/maintenance/all`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
 
@@ -91,6 +97,7 @@ const API = {
 
     // Booking APIs
     getBookings: (userId) => fetch(`${API_BASE}/bookings${userId ? '?userId=' + userId : ''}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
+    getTakenSeats: (tripId) => fetch(`${API_BASE}/bookings/trip/${tripId}/seats`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     getBooking: (id) => fetch(`${API_BASE}/bookings/${id}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     createBooking: (bookingDTO) => fetch(`${API_BASE}/bookings`, {
         method: 'POST',
@@ -109,6 +116,8 @@ const API = {
         headers: getAuthHeaders(),
         body: JSON.stringify(checklist)
     }).then(res => handleRes(res)),
+    holdDeparture: (tripId, inspectorName, reason) => fetch(`${API_BASE}/safety/trip/${tripId}/hold?inspectorName=${encodeURIComponent(inspectorName)}&reason=${encodeURIComponent(reason)}`, { method: 'PUT', headers: getAuthHeaders() }).then(res => handleRes(res)),
+    deleteSafetyChecklist: (tripId) => fetch(`${API_BASE}/safety/trip/${tripId}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
     approveDeparture: (tripId, inspectorName) => fetch(`${API_BASE}/safety/trip/${tripId}/approve?inspectorName=${encodeURIComponent(inspectorName)}`, { method: 'PUT', headers: getAuthHeaders() }).then(res => handleRes(res)),
 
     // Promotion APIs
@@ -131,7 +140,14 @@ const API = {
         body: JSON.stringify(promo)
     }).then(res => handleRes(res)),
     deletePromotion: (id) => fetch(`${API_BASE}/promotions/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
-
+    validatePromotion: (code, tripId, seatCount) => fetch(`${API_BASE}/promotions/validate?code=${encodeURIComponent(code)}&tripId=${tripId}&seatCount=${seatCount}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
+    getApplicableTrips: (id) => fetch(`${API_BASE}/promotions/${id}/trips`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
+    setApplicableTrips: (id, tripIds) => fetch(`${API_BASE}/promotions/${id}/trips`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(tripIds)
+    }).then(res => handleRes(res)),
+    
     // Review APIs
     getReviews: (tripId) => fetch(`${API_BASE}/reviews${tripId ? '?tripId=' + tripId : ''}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
     searchReviews: (keyword, rating, status) => {
@@ -148,6 +164,14 @@ const API = {
     }).then(res => handleRes(res)),
     updateReviewStatus: (id, status) => fetch(`${API_BASE}/reviews/${id}/status?status=${status}`, { method: 'PUT', headers: getAuthHeaders() }).then(res => handleRes(res)),
     deleteReview: (id) => fetch(`${API_BASE}/reviews/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => handleRes(res)),
+
+    // Customer Profile APIs
+    getCustomer: (id) => fetch(`${API_BASE}/customers/${id}`, { headers: getAuthHeaders() }).then(res => handleRes(res)),
+    updateCustomerProfile: (id, data) => fetch(`${API_BASE}/customers/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+    }).then(res => handleRes(res)),
 
     // Report APIs
     getSummaryReport: () => fetch(`${API_BASE}/reports/summary`, { headers: getAuthHeaders() }).then(res => handleRes(res)),

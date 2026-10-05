@@ -1,5 +1,6 @@
 package com.boatsafari.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Check;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class Customer {
     private String email;
 
     @Column(nullable = false, length = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // accepted on input, never sent back in responses
     private String passwordHash;
 
     @Column(length = 100)
@@ -69,7 +71,7 @@ public class Customer {
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public String getFullName() { return firstName + " " + lastName; }
+    public String getFullName() { return ((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName)).trim(); }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

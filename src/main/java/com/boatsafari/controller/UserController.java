@@ -1,5 +1,6 @@
 package com.boatsafari.controller;
 
+import com.boatsafari.dto.AdminUserDTO;
 import com.boatsafari.model.User;
 import com.boatsafari.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<AdminUserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllAccounts());
     }
 
     @GetMapping("/{id}")
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<User> updateUserStatus(@PathVariable Long id, @RequestParam String status) {
-        return ResponseEntity.ok(userService.updateUserStatus(id, status));
+    public ResponseEntity<AdminUserDTO> updateUserStatus(@PathVariable String id, @RequestParam String status) {
+        return ResponseEntity.ok(userService.updateAccountStatus(id, status));
     }
 }
