@@ -997,7 +997,9 @@ case 'customer-profile-view':
         this.selectedSeats = [];
         this.currentDiscountAmount = 0;
         this.currentPromoCode = '';
-        document.getElementById('promo-code-input').value = '';
+        // Pre-fill a code the tourist picked in the Seasonal Vouchers pop-up (applied after seats are chosen)
+        document.getElementById('promo-code-input').value = this.pendingVoucherCode || '';
+        this.pendingVoucherCode = '';
 
         const photoBox = document.getElementById('booking-trip-photo');
         if (photoBox) photoBox.innerHTML = Scenery.html(trip, 'h-60', 'rounded-2xl mb-5 overflow-hidden');
@@ -1038,12 +1040,13 @@ case 'customer-profile-view':
             this.selectedSeats.push(seatNum);
             btnEl.classList.add('seat-selected');
         }
-        if (this.currentPromoCode) {
-            this.currentDiscountAmount = 0;
-            this.currentPromoCode = '';
-            showToast('Seat selection changed. Please re-apply your voucher.', 'error');
-        }
+        // The discount depends on the number of seats, so work it out again for the new selection
+        this.currentDiscountAmount = 0;
+        this.currentPromoCode = '';
         this.updateBookingSummary();
+        if (this.selectedSeats.length > 0 && document.getElementById('promo-code-input').value.trim()) {
+            this.applyPromoCode(true);
+        }
     },
 
     updateBookingSummary() {
@@ -1060,20 +1063,25 @@ case 'customer-profile-view':
         document.getElementById('booking-total').textContent = 'LKR ' + finalPrice.toLocaleString();
     },
 
-    async applyPromoCode() {
+    // auto = true when the code was already in the box and the seat selection changed
+    async applyPromoCode(auto = false) {
         const codeInput = document.getElementById('promo-code-input').value.trim();
         if (!codeInput) return showToast('Please enter a voucher code', 'error');
         if (this.selectedSeats.length === 0) return showToast('Please select at least 1 seat before applying a voucher.', 'error');
 
+        const requestId = (this.promoRequestId = (this.promoRequestId || 0) + 1);
+        const seatCount = this.selectedSeats.length;
         try {
-            const result = await API.validatePromotion(codeInput, this.currentTrip.id, this.selectedSeats.length);
+            const result = await API.validatePromotion(codeInput, this.currentTrip.id, seatCount);
+            if (requestId !== this.promoRequestId) return; // seats changed again: a newer check is running
             this.currentDiscountAmount = result.discountAmount;
             this.currentPromoCode = result.code;
-            showToast(`Voucher applied! You saved LKR ${result.discountAmount.toLocaleString()}.`);
+            showToast(`Voucher ${result.code} applied! You saved LKR ${result.discountAmount.toLocaleString()}.`);
         } catch (e) {
+            if (requestId !== this.promoRequestId) return;
             this.currentDiscountAmount = 0;
             this.currentPromoCode = '';
-            showToast(e.message, 'error');
+            showToast(auto ? `Voucher ${codeInput} not applied yet: ${e.message}` : e.message, 'error');
         }
         this.updateBookingSummary();
     },
@@ -1762,20 +1770,98 @@ case 'customer-profile-view':
         cta.onclick = () => { this.closeFeatureInfo(); f.go(); };
         document.getElementById('feature-modal').classList.remove('hidden');
 
-        // Live voucher codes (shown only if the server allows this role to read them)
+        // Live voucher codes with a description of each offer and how to apply it
         if (key === 'vouchers') {
+            const howTo = this.voucherHowToHtml();
+            extra.innerHTML = howTo;
             try {
                 const promos = await API.getPromotions();
-                const active = (Array.isArray(promos) ? promos : []).filter(p => (p.computedStatus || p.status) === 'ACTIVE');
+                const today = new Date().toISOString().slice(0, 10);
+                const active = (Array.isArray(promos) ? promos : [])
+                    .filter(p => (p.computedStatus || p.status) === 'ACTIVE')
+                    .filter(p => !p.usageLimit || (p.usageCount || 0) < p.usageLimit)
+                    .sort((a, b) => (a.validUntil || '9999').localeCompare(b.validUntil || '9999'));
                 if (active.length) {
                     extra.innerHTML = '<div class="text-[11px] font-bold text-slate-400 uppercase mb-2">Offers available now</div>' +
-                        active.map(p => {
-                            const off = p.discountType === 'FIXED_AMOUNT' ? `LKR ${p.fixedAmount} off` : `${p.discountPercentage}% off`;
-                            return `<span class="inline-block mr-2 mb-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold"><span class="font-mono">${p.code}</span> · ${off}</span>`;
-                        }).join('');
+                        active.map(p => this.voucherCardHtml(p, today)).join('') + howTo;
+                } else {
+                    extra.innerHTML = '<p class="text-xs text-slate-500 mb-3">There are no vouchers available at the moment. Please check again later.</p>' + howTo;
                 }
             } catch (e) { /* not available for this role: show the description only */ }
         }
+    },
+
+    // Escapes text typed by staff (voucher titles and descriptions) before it is placed in HTML
+    escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, c =>
+            ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    },
+
+    formatLkr(amount) {
+        return 'LKR ' + Number(amount).toLocaleString('en-LK', { maximumFractionDigits: 2 });
+    },
+
+    formatVoucherDate(isoDate) {
+        return new Date(isoDate + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    },
+
+    voucherHowToHtml() {
+        const steps = [
+            'Click <strong>Use Code</strong> on a voucher above. The code is copied and saved for your booking.',
+            'Sign in, then choose a trip that is open for booking.',
+            'Select your seats. The code is already in the <strong>Voucher / Discount Code</strong> box (you can also paste or type it).',
+            'Click <strong>Apply</strong>. Your discount and new total are shown before you confirm the booking.'
+        ];
+        return '<div class="rounded-2xl bg-cyan-50 border border-cyan-100 p-4 mt-3">' +
+            '<div class="text-[11px] font-bold text-cyan-800 uppercase mb-2">How to apply a voucher</div>' +
+            '<ol class="space-y-1.5">' + steps.map((t, i) =>
+                `<li class="flex gap-2 text-xs text-slate-700"><span class="flex-none w-5 h-5 rounded-full bg-cyan-600 text-white text-[10px] font-bold flex items-center justify-center">${i + 1}</span><span>${t}</span></li>`
+            ).join('') + '</ol>' +
+            '<p class="text-[11px] text-slate-500 mt-2">You can use one voucher per booking. If a code cannot be used, a message tells you why (for example, the booking total is below the minimum or the code has expired).</p>' +
+            '</div>';
+    },
+
+    voucherCardHtml(p, today) {
+        const fixed = p.discountType === 'FIXED_AMOUNT';
+        const badge = fixed ? `${this.formatLkr(p.fixedAmount)} OFF` : `${p.discountPercentage}% OFF`;
+
+        // Plain-language summary used when the Marketing Officer has not written a description
+        let summary = fixed
+            ? `Get ${this.formatLkr(p.fixedAmount)} off your booking total.`
+            : `Get ${p.discountPercentage}% off your booking total.`;
+        if (p.description && p.description.trim()) summary = this.escapeHtml(p.description.trim());
+
+        const rules = [];
+        if (p.minBookingAmount) rules.push(`Minimum booking: ${this.formatLkr(p.minBookingAmount)}`);
+        if (!fixed && p.maxDiscount) rules.push(`Maximum discount: ${this.formatLkr(p.maxDiscount)}`);
+        if (p.validFrom && p.validFrom > today) rules.push(`Starts on ${this.formatVoucherDate(p.validFrom)}`);
+        if (p.validUntil) rules.push(`Valid until ${this.formatVoucherDate(p.validUntil)}`);
+        if (p.usageLimit) rules.push(`${p.usageLimit - (p.usageCount || 0)} uses left`);
+
+        const code = this.escapeHtml(p.code);
+        return `<div class="rounded-2xl border border-amber-200 bg-amber-50/60 p-3 mb-2">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="font-mono font-extrabold text-sm text-slate-900">${code}</span>
+                            <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] font-extrabold">${badge}</span>
+                        </div>
+                        ${p.title ? `<div class="text-xs font-bold text-slate-800 mt-1">${this.escapeHtml(p.title)}</div>` : ''}
+                    </div>
+                    <button type="button" onclick="App.useVoucherCode('${code}')" class="flex-none px-3 py-1.5 bg-slate-900 hover:bg-slate-700 text-white text-[11px] font-bold rounded-lg transition">Use Code</button>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed mt-1">${summary}</p>
+                ${rules.length ? `<div class="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-[11px] text-slate-500">${rules.map(r => `<span>• ${r}</span>`).join('')}</div>` : ''}
+            </div>`;
+    },
+
+    // Copies the code, remembers it for the seat selection page and opens the trip list
+    async useVoucherCode(code) {
+        this.pendingVoucherCode = code;
+        try { await navigator.clipboard.writeText(code); } catch (e) { /* clipboard blocked: the code is still pre-filled */ }
+        showToast(`Voucher ${code} copied. Choose a trip and your seats, then click Apply.`);
+        this.closeFeatureInfo();
+        this.navigate('package-listing-view');
     },
 
     closeFeatureInfo() {
