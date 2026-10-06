@@ -60,13 +60,32 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private TripRepository tripRepository;
+    private static final String ADMIN_EMAIL = "admin@boatsafari.lk";
+    private static final String ADMIN_NAME = "Mishan Dissanayaka (Admin)";
+
+    /** Keeps the administrator's display name correct on databases that were seeded earlier. */
+    private void renameAdminAccount() {
+        userRepository.findByEmail(ADMIN_EMAIL).ifPresent(u -> {
+            if (!ADMIN_NAME.equals(u.getFullName())) {
+                u.setFullName(ADMIN_NAME);
+                userRepository.save(u);
+            }
+        });
+        for (Administrator a : administratorRepository.findAll()) {
+            if (ADMIN_EMAIL.equalsIgnoreCase(a.getEmail()) && !ADMIN_NAME.equals(a.getName())) {
+                a.setName(ADMIN_NAME);
+                administratorRepository.save(a);
+            }
+        }
+    }
 
     @Override
     public void run(String... args) throws Exception {
+         renameAdminAccount();
         if (userRepository.count() > 0) return; // Prevent duplicate initialization
 
         // 1. Seed Users (legacy table — still backs Admin's "User & Roles" page for now)
-        User admin = userRepository.save(new User(null, "Vibuda senidu (Admin)", "admin@boatsafari.lk", "admin123", "+94 77 100 0001", "881234567V", "ADMIN", "ACTIVE"));
+        User admin = userRepository.save(new User(null, "Mishan Dissanayaka (Admin)", "admin@boatsafari.lk", "admin123", "+94 77 100 0001", "881234567V", "ADMIN", "ACTIVE"));
         User deskOfficer = userRepository.save(new User(null, "Jalina Waruna (Desk)", "desk@boatsafari.lk", "desk123", "+94 77 100 0002", "925678123V", "DESK_OFFICER", "ACTIVE"));
         User fleetManager = userRepository.save(new User(null, "chamikara liyanage", "fleet@boatsafari.lk", "fleet123", "+94 77 100 0003", "791238901V", "FLEET_MANAGER", "ACTIVE"));
         User safetyOfficer = userRepository.save(new User(null, "Uthsara ", "safety@boatsafari.lk", "safety123", "+94 77 100 0004", "853456789V", "SAFETY_OFFICER", "ACTIVE"));
@@ -76,7 +95,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // 1b. Seed Staff (report-aligned tables) — same credentials as above
         Administrator adminStaff = new Administrator();
-        adminStaff.setName("Vibuda senidu (Admin)");
+        adminStaff.setName("Mishan Dissanayaka (Admin)");
         adminStaff.setEmail("admin@boatsafari.lk");
         adminStaff.setPasswordHash("admin123");
         adminStaff.setHireDate(LocalDate.now().minusYears(2));
