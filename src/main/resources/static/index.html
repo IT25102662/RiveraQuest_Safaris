@@ -353,8 +353,8 @@
     <div id="fleet-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
         <div class="page-banner banner-reef">
             <div>
-            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Fleet Manager</span></h1>
-            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">FLEET MANAGER</strong> | Vessel Registry & Maintenance Workspace</p>
+                <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Fleet Manager</span></h1>
+                <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">FLEET MANAGER</strong> | Vessel Registry & Maintenance Workspace</p>
             </div>
         </div>
 
@@ -395,8 +395,8 @@
     <div id="safety-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
         <div class="page-banner banner-whale">
             <div>
-            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Safety Officer</span></h1>
-            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">SAFETY OFFICER</strong> | Maritime Pre-Departure Audit & Clearance Workspace</p>
+                <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Safety Officer</span></h1>
+                <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">SAFETY OFFICER</strong> | Maritime Pre-Departure Audit & Clearance Workspace</p>
             </div>
         </div>
 
@@ -429,8 +429,8 @@
     <div id="marketing-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
         <div class="page-banner banner-river">
             <div>
-            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Marketing Officer</span></h1>
-            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">MARKETING OFFICER</strong> | Package Management, Pricing & Voucher Workspace</p>
+                <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">Marketing Officer</span></h1>
+                <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">MARKETING OFFICER</strong> | Package Management, Pricing & Voucher Workspace</p>
             </div>
         </div>
 
@@ -461,8 +461,8 @@
     <div id="admin-dashboard-view" class="view-page hidden max-w-7xl mx-auto px-4 py-10">
         <div class="page-banner banner-coast">
             <div>
-            <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">System Administrator</span></h1>
-            <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">ADMIN</strong> | Complete System Management & Executive Reports Workspace</p>
+                <h1 class="text-3xl font-extrabold">Welcome, <span class="logged-user-name text-amber-300">System Administrator</span></h1>
+                <p class="text-cyan-50 text-sm mt-1">Role: <strong class="logged-user-role text-white">ADMIN</strong> | Complete System Management & Executive Reports Workspace</p>
             </div>
         </div>
 
@@ -1018,40 +1018,28 @@
         <div class="glass-card rounded-3xl shadow-2xl overflow-hidden">
             <div class="login-photo banner-coast"><div><span class="text-amber-300 text-xs font-bold uppercase tracking-widest">RiveraQuest Safaris</span><div class="text-2xl font-extrabold">Welcome aboard</div></div></div>
             <div class="p-8">
-            <h1 class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Account Sign In</h1>
-            <p class="text-xs text-slate-500 text-center mb-6">Authenticate to access your stakeholder workspace</p>
+                <h1 class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Account Sign In</h1>
+                <p class="text-xs text-slate-500 text-center mb-6">Authenticate to access your stakeholder workspace</p>
 
-            <form onsubmit="event.preventDefault(); AuthState.loginWithCredentials(document.getElementById('login-email').value, document.getElementById('login-password').value);" class="space-y-4 mb-8">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Email Address</label>
-                    <input type="email" id="login-email" placeholder="you@example.com" autocomplete="username" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Password</label>
-                    <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
-                </div>
-                <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-2xl text-sm shadow-lg shadow-cyan-600/30 transition">Authenticate & Enter Workspace →</button>
-            </form>
+                <form onsubmit="event.preventDefault(); AuthState.loginWithCredentials(document.getElementById('login-email').value, document.getElementById('login-password').value);" class="space-y-4 mb-8">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Email Address</label>
+                        <input type="email" id="login-email" placeholder="you@example.com" autocomplete="username" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase block mb-1">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl text-sm border-0 focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold rounded-2xl text-sm shadow-lg shadow-cyan-600/30 transition">Authenticate & Enter Workspace →</button>
+                </form>
 
-            <p class="text-center text-sm text-slate-600 mb-6 -mt-4">New to RiveraQuest? <a href="#" onclick="App.navigate('register-view'); return false;" class="font-extrabold text-cyan-700 hover:underline">Create a free account</a></p>
+                <p class="text-center text-sm text-slate-600 mb-2 -mt-4">New to RiveraQuest? <a href="#" onclick="App.navigate('register-view'); return false;" class="font-extrabold text-cyan-700 hover:underline">Create a free account</a></p>
 
-            <!-- Authentic Demo Account Shortcuts -->
-            <div class="border-t border-slate-100 pt-6">
-                <span class="text-[11px] font-bold text-slate-400 uppercase block text-center mb-3">Or Authenticate As Stakeholder Account:</span>
-                <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
-                    <button onclick="AuthState.loginWithCredentials('tourist@gmail.com', 'tourist123')" class="p-2.5 bg-sky-50 text-sky-800 hover:bg-sky-100 rounded-xl text-left border border-sky-200">🏖 Tourist Portal</button>
-                    <button onclick="AuthState.loginWithCredentials('desk@boatsafari.lk', 'desk123')" class="p-2.5 bg-teal-50 text-teal-800 hover:bg-teal-100 rounded-xl text-left border border-teal-200">📋 Desk Officer</button>
-                    <button onclick="AuthState.loginWithCredentials('fleet@boatsafari.lk', 'fleet123')" class="p-2.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 rounded-xl text-left border border-emerald-200">🚤 Fleet Manager</button>
-                    <button onclick="AuthState.loginWithCredentials('safety@boatsafari.lk', 'safety123')" class="p-2.5 bg-amber-50 text-amber-800 hover:bg-amber-100 rounded-xl text-left border border-amber-200">🦺 Safety Officer</button>
-                    <button onclick="AuthState.loginWithCredentials('marketing@boatsafari.lk', 'marketing123')" class="p-2.5 bg-purple-50 text-purple-800 hover:bg-purple-100 rounded-xl text-left border border-purple-200">🏷 Marketing Officer</button>
-                    <button onclick="AuthState.loginWithCredentials('admin@boatsafari.lk', 'admin123')" class="p-2.5 bg-indigo-50 text-indigo-800 hover:bg-indigo-100 rounded-xl text-left border border-indigo-200">⚙️ System Admin</button>
-                </div>
-            </div>
             </div>
         </div>
     </div>
 
-    <!-- 23. REGISTER VIEW --> 
+    <!-- 23. REGISTER VIEW -->
     <div id="register-view" class="view-page hidden max-w-md mx-auto px-4 py-12">
         <div class="glass-card p-8 rounded-3xl shadow-2xl">
             <h1 class="text-2xl font-extrabold text-slate-900 mb-1 text-center">Create Your Account</h1>
