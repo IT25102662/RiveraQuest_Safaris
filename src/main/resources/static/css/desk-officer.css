@@ -1,0 +1,160 @@
+
+.btn-desk-validate {
+    background-color: #0d9488; /* Teal color */
+
+    color: #ffffff;
+    
+    /* Font Style & Size  */
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600; /* 400 = Normal, 600 = Semi-bold, 700 = Bold */
+    
+    /* Button Size & Padding */
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Validate Button */
+.btn-desk-validate:hover {
+    background-color: #0f766e; /* Darker Teal */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. RECEIPT BUTTON
+   -------------------------------------------------------------------------- */
+.btn-desk-receipt {
+    /* Background Color */
+    background-color: #1e293b; /* Slate Dark */
+    
+    /* Text Color */
+    color: #ffffff;
+    
+    /* Font Style & Size  */
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    
+    /* Button Size & Padding */
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Receipt Button Hover State */
+.btn-desk-receipt:hover {
+    background-color: #0f172a; /* Darker Slate */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+
+/* --------------------------------------------------------------------------
+   3. CANCEL BUTTON
+   -------------------------------------------------------------------------- */
+.btn-desk-cancel {
+    /* Background Color */
+    background-color: #e11d48; /* Rose Red */
+    
+    /* Text Color */
+    color: #ffffff;
+    
+    /* Font Style & Size  */
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    
+    /* Button Size & Padding */
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Cancel Button Hover State */
+.btn-desk-cancel:hover {
+    background-color: #be123c; /* Darker Rose Red */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(225, 29, 72, 0.3);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. NEW WALK-IN BOOKING BUTTON (Dashboard Header Button)
+   -------------------------------------------------------------------------- */
+.btn-desk-walkin {
+    background-color: #0891b2; /* Cyan color */
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-desk-walkin:hover {
+    background-color: #0e7490;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(8, 145, 178, 0.4);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. MODAL POPUP BUTTONS
+   -------------------------------------------------------------------------- */
+/* Modal Confirm Cancel Button */
+.btn-desk-modal-confirm-cancel {
+    background-color: #e11d48;
+    color: #ffffff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 12px 20px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-desk-modal-confirm-cancel:hover {
+    background-color: #be123c;
+}
+
+/* Modal Keep Active (Dismiss) Button */
+.btn-desk-modal-keep-active {
+    background-color: #e2e8f0;
+    color: #334155;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-desk-modal-keep-active:hover {
+    background-color: #cbd5e1;
+}
